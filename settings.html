@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MidSchool Manager - Settings</title>
+  <meta name="theme-color" content="#4F46E5">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-192.svg">
+  <link rel="stylesheet" href="css/main.css">
+  <style>
+    .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-lg); margin-bottom: var(--space-xl); }
+    @media (max-width: 1024px) { .settings-grid { grid-template-columns: 1fr; } }
+    .settings-section { margin-bottom: var(--space-xl); }
+    .settings-section__title { font-size: var(--text-lg); font-weight: 700; color: var(--text); margin-bottom: var(--space-md); padding-bottom: var(--space-sm); border-bottom: 2px solid var(--primary); display: flex; align-items: center; gap: var(--space-sm); }
+    .settings-section__title .icon { font-size: 1.3em; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md); margin-bottom: var(--space-md); }
+    @media (max-width: 767px) { .form-row { grid-template-columns: 1fr; } }
+    .form-group { margin-bottom: var(--space-md); }
+    .form-group label { display: block; font-weight: 600; font-size: var(--text-sm); color: var(--text); margin-bottom: var(--space-xs); }
+    .form-group input, .form-group select { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius-md); font-size: var(--text-sm); background: var(--bg); color: var(--text); transition: border-color var(--transition-fast); }
+    .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+    .form-group .hint { font-size: var(--text-xs); color: var(--text-secondary); margin-top: 4px; }
+
+    /* Period schedule table */
+    .period-table { width: 100%; border-collapse: collapse; margin-bottom: var(--space-md); }
+    .period-table th, .period-table td { padding: 8px 12px; text-align: left; border-bottom: 1px solid var(--border); font-size: var(--text-sm); }
+    .period-table th { font-weight: 600; color: var(--text-secondary); font-size: var(--text-xs); text-transform: uppercase; }
+    .period-table input { width: 100%; padding: 6px 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: var(--text-sm); }
+    .period-table input:focus { outline: none; border-color: var(--primary); }
+    .period-table .period-label-col { width: 120px; }
+    .period-table .time-col { width: 100px; }
+    .period-table .action-col { width: 50px; text-align: center; }
+    .period-table .btn-remove { background: none; border: none; color: var(--danger); cursor: pointer; font-size: 18px; padding: 4px; border-radius: var(--radius-sm); }
+    .period-table .btn-remove:hover { background: var(--danger-light); }
+
+    /* Days checkboxes */
+    .days-grid { display: flex; flex-wrap: wrap; gap: var(--space-sm); }
+    .day-toggle { display: flex; align-items: center; gap: 6px; padding: 8px 14px; border: 1px solid var(--border); border-radius: var(--radius-md); cursor: pointer; font-size: var(--text-sm); font-weight: 500; transition: all var(--transition-fast); user-select: none; }
+    .day-toggle input { display: none; }
+    .day-toggle.checked { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+    /* Semester dates */
+    .semester-card { background: var(--bg-secondary); border-radius: var(--radius-md); padding: var(--space-md); margin-bottom: var(--space-md); border: 1px solid var(--border); }
+    .semester-card__title { font-weight: 700; font-size: var(--text-sm); margin-bottom: var(--space-sm); color: var(--primary); }
+    .semester-card .form-row { margin-bottom: 0; }
+
+    /* Backup/Restore section */
+    .backup-actions { display: flex; flex-wrap: wrap; gap: var(--space-md); margin-bottom: var(--space-lg); }
+    .backup-btn { display: flex; flex-direction: column; align-items: center; gap: var(--space-xs); padding: var(--space-lg); border: 2px dashed var(--border); border-radius: var(--radius-lg); cursor: pointer; background: var(--bg); transition: all var(--transition-fast); flex: 1; min-width: 160px; text-align: center; }
+    .backup-btn:hover { border-color: var(--primary); background: var(--primary-light); }
+    .backup-btn .icon { font-size: 2em; }
+    .backup-btn .label { font-weight: 600; font-size: var(--text-sm); color: var(--text); }
+    .backup-btn .desc { font-size: var(--text-xs); color: var(--text-secondary); }
+
+    /* Storage usage bar */
+    .storage-bar { margin-bottom: var(--space-lg); }
+    .storage-bar__track { width: 100%; height: 12px; background: var(--bg-secondary); border-radius: 6px; overflow: hidden; margin-bottom: var(--space-xs); }
+    .storage-bar__fill { height: 100%; border-radius: 6px; transition: width 0.5s ease; background: linear-gradient(90deg, var(--success), var(--primary)); }
+    .storage-bar__fill--warning { background: linear-gradient(90deg, var(--warning), var(--danger)); }
+    .storage-bar__labels { display: flex; justify-content: space-between; font-size: var(--text-xs); color: var(--text-secondary); }
+
+    /* Data breakdown */
+    .data-breakdown { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: var(--space-sm); margin-bottom: var(--space-lg); }
+    .data-item { display: flex; align-items: center; gap: var(--space-sm); padding: var(--space-sm); background: var(--bg-secondary); border-radius: var(--radius-md); font-size: var(--text-sm); }
+    .data-item__count { font-weight: 700; color: var(--primary); min-width: 30px; text-align: right; }
+    .data-item__label { color: var(--text-secondary); }
+
+    /* Danger zone */
+    .danger-zone { border: 2px solid var(--danger); border-radius: var(--radius-lg); padding: var(--space-lg); background: rgba(239,68,68,0.03); }
+    .danger-zone__title { font-weight: 700; color: var(--danger); margin-bottom: var(--space-sm); display: flex; align-items: center; gap: var(--space-sm); }
+    .danger-zone__desc { font-size: var(--text-sm); color: var(--text-secondary); margin-bottom: var(--space-md); }
+
+    /* Class management */
+    .class-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--space-sm); margin-bottom: var(--space-md); }
+    .class-item { display: flex; align-items: center; gap: var(--space-sm); padding: var(--space-sm) var(--space-md); border-radius: var(--radius-md); border: 1px solid var(--border); background: var(--bg); }
+    .class-item__color { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; }
+    .class-item__name { font-weight: 600; font-size: var(--text-sm); flex: 1; }
+    .class-item__count { font-size: var(--text-xs); color: var(--text-secondary); }
+
+    /* Import file input */
+    .file-input-wrapper { position: relative; }
+    .file-input-wrapper input[type="file"] { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+
+    .save-bar { position: sticky; bottom: 0; background: var(--bg); border-top: 1px solid var(--border); padding: var(--space-md) 0; margin-top: var(--space-xl); display: flex; justify-content: flex-end; gap: var(--space-md); z-index: 10; }
+  </style>
+</head>
+<body>
+  <!-- Sidebar -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar__brand">
+      <div class="sidebar__brand-icon">📚</div>
+      <span class="sidebar__brand-name">MidSchool Manager</span>
+    </div>
+    <div class="sidebar__nav">
+      <div class="sidebar__section-label">Main</div>
+      <a href="index.html" class="sidebar__link" data-nav="index.html">
+        <span class="sidebar__icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
+        <span class="sidebar__label">Dashboard</span>
+      </a>
+      <a href="lessons.html" class="sidebar__link" data-nav="lessons.html">
+        <span class="sidebar__icon"><svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span>
+        <span class="sidebar__label">Lesson Records</span>
+      </a>
+      <a href="materials.html" class="sidebar__link" data-nav="materials.html">
+        <span class="sidebar__icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span>
+        <span class="sidebar__label">Materials</span>
+      </a>
+      <a href="plans.html" class="sidebar__link" data-nav="plans.html">
+        <span class="sidebar__icon"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></span>
+        <span class="sidebar__label">Lesson Plans</span>
+      </a>
+      <a href="calendar.html" class="sidebar__link" data-nav="calendar.html">
+        <span class="sidebar__icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
+        <span class="sidebar__label">Calendar</span>
+      </a>
+      <div class="sidebar__section-label">Students</div>
+      <a href="students.html" class="sidebar__link" data-nav="students.html">
+        <span class="sidebar__icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+        <span class="sidebar__label">Students</span>
+      </a>
+      <a href="assessments.html" class="sidebar__link" data-nav="assessments.html">
+        <span class="sidebar__icon"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span>
+        <span class="sidebar__label">Assessments</span>
+      </a>
+      <a href="remedial.html" class="sidebar__link" data-nav="remedial.html">
+        <span class="sidebar__icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>
+        <span class="sidebar__label">Remedial Work</span>
+      </a>
+    </div>
+    <div class="sidebar__divider"></div>
+    <div class="sidebar__footer">
+      <a href="settings.html" class="sidebar__link sidebar__link--active" data-nav="settings.html">
+        <span class="sidebar__icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>
+        <span class="sidebar__label">Settings</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Sidebar overlay for mobile -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- Header -->
+  <header class="header">
+    <button class="hamburger" id="hamburgerBtn" aria-label="Toggle navigation">
+      <span class="hamburger__line"></span>
+      <span class="hamburger__line"></span>
+      <span class="hamburger__line"></span>
+    </button>
+    <div class="header__inner">
+      <h1 class="header__title" data-header-title>Settings</h1>
+      <div class="header__info" data-header-info></div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="settings-grid">
+      <!-- LEFT COLUMN -->
+      <div>
+        <!-- Teacher & School Info -->
+        <div class="card settings-section">
+          <div class="settings-section__title"><span class="icon">👤</span> Teacher & School Information</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="settTeacherName">Teacher Name</label>
+              <input type="text" id="settTeacherName" placeholder="e.g. Mr. Smith">
+            </div>
+            <div class="form-group">
+              <label for="settSchoolName">School Name</label>
+              <input type="text" id="settSchoolName" placeholder="e.g. Al-Farabi Middle School">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="settAcademicYear">Academic Year</label>
+              <input type="text" id="settAcademicYear" placeholder="2025-2026">
+            </div>
+            <div class="form-group">
+              <label for="settGradingScale">Grading Scale (max score)</label>
+              <input type="number" id="settGradingScale" min="1" max="100" value="20">
+              <div class="hint">Morocco standard: /20</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Semester Dates -->
+        <div class="card settings-section">
+          <div class="settings-section__title"><span class="icon">📅</span> Semester Dates</div>
+          <div class="semester-card">
+            <div class="semester-card__title">Semester 1</div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="settSem1Start">Start Date</label>
+                <input type="date" id="settSem1Start">
+              </div>
+              <div class="form-group">
+                <label for="settSem1End">End Date</label>
+                <input type="date" id="settSem1End">
+              </div>
+            </div>
+          </div>
+          <div class="semester-card">
+            <div class="semester-card__title">Semester 2</div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="settSem2Start">Start Date</label>
+                <input type="date" id="settSem2Start">
+              </div>
+              <div class="form-group">
+                <label for="settSem2End">End Date</label>
+                <input type="date" id="settSem2End">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Schedule: Days & Periods -->
+        <div class="card settings-section">
+          <div class="settings-section__title"><span class="icon">🕐</span> Schedule Configuration</div>
+
+          <div class="form-group">
+            <label>Active School Days</label>
+            <div class="days-grid" id="daysGrid"></div>
+          </div>
+
+          <div class="form-group" style="margin-top: var(--space-lg);">
+            <label>Period Schedule</label>
+            <table class="period-table" id="periodTable">
+              <thead>
+                <tr>
+                  <th class="period-label-col">Label</th>
+                  <th class="time-col">Start</th>
+                  <th class="time-col">End</th>
+                  <th class="action-col"></th>
+                </tr>
+              </thead>
+              <tbody id="periodTableBody"></tbody>
+            </table>
+            <button class="btn btn-secondary btn-sm" id="btnAddPeriod" onclick="MSM.SettingsPage.addPeriod()">+ Add Period</button>
+          </div>
+        </div>
+
+        <!-- Classes Overview -->
+        <div class="card settings-section">
+          <div class="settings-section__title"><span class="icon">🏫</span> Classes Overview</div>
+          <div class="class-list" id="classList"></div>
+          <div style="display:flex;align-items:center;gap:var(--space-md);margin-top:var(--space-sm);">
+            <p class="hint" style="font-size: var(--text-xs); color: var(--text-secondary); margin:0; flex:1;">
+              Classes grouped by grade: <span style="color:#2563EB;font-weight:600">1AC = Blue</span>, <span style="color:#059669;font-weight:600">2AC = Green</span>, <span style="color:#7C3AED;font-weight:600">3AC = Purple</span>
+            </p>
+            <button class="btn btn-secondary btn-sm" onclick="MSM.SettingsPage.refreshClassColors()">Refresh Colors</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div>
+        <!-- Backup & Restore -->
+        <div class="card settings-section">
+          <div class="settings-section__title"><span class="icon">💾</span> Backup & Restore</div>
+          <p style="font-size: var(--text-sm); color: var(--text-secondary); margin-bottom: var(--space-md);">
+            All data is stored locally in your browser. Export a backup regularly to avoid data loss.
+          </p>
+          <div class="backup-actions">
+            <div class="backup-btn" onclick="MSM.SettingsPage.exportBackup()">
+              <span class="icon">📥</span>
+              <span class="label">Export Backup</span>
+              <span class="desc">Download all data as JSON</span>
+            </div>
+            <div class="backup-btn file-input-wrapper">
+              <span class="icon">📤</span>
+              <span class="label">Import Backup</span>
+              <span class="desc">Restore from a JSON file</span>
+              <input type="file" id="importFileInput" accept=".json" onchange="MSM.SettingsPage.handleImport(event)">
+            </div>
+          </div>
+        </div>
+
+        <!-- Storage Usage -->
+        <div class="card settings-section">
+          <div class="settings-section__title"><span class="icon">📊</span> Storage Usage</div>
+          <div class="storage-bar">
+            <div class="storage-bar__track">
+              <div class="storage-bar__fill" id="storageBarFill" style="width: 0%;"></div>
+            </div>
+            <div class="storage-bar__labels">
+              <span id="storageUsedLabel">0 KB</span>
+              <span id="storageTotalLabel">5 MB limit</span>
+            </div>
+          </div>
+
+          <div class="data-breakdown" id="dataBreakdown"></div>
+        </div>
+
+        <!-- AI Integration -->
+        <div class="card settings-section">
+          <div class="settings-section__title"><span class="icon">🤖</span> AI Integration (Gemini)</div>
+          <p style="font-size: var(--text-sm); color: var(--text-secondary); margin-bottom: var(--space-md);">
+            Connect to Google Gemini AI to automatically extract logbook entries from your lesson plans. Get a free API key at <a href="https://aistudio.google.com/apikey" target="_blank" style="color:var(--primary);text-decoration:underline">aistudio.google.com/apikey</a>.
+          </p>
+          <div class="form-group">
+            <label for="settApiKey">Gemini API Key</label>
+            <div style="display:flex;gap:8px">
+              <input type="password" id="settApiKey" placeholder="AIza..." style="flex:1">
+              <button class="btn btn-secondary btn-sm" onclick="MSM.SettingsPage.toggleKeyVisibility()" id="btnToggleKey">Show</button>
+              <button class="btn btn-secondary btn-sm" onclick="MSM.SettingsPage.testApiKey()">Test</button>
+            </div>
+            <div class="hint">Your API key is stored locally and never sent anywhere except Google's Gemini API.</div>
+          </div>
+          <div class="form-group">
+            <label for="settAiModel">Model</label>
+            <select id="settAiModel">
+              <option value="gemini-2.5-flash">Gemini 2.5 Flash (Recommended - Free)</option>
+              <option value="gemini-2.5-pro">Gemini 2.5 Pro (Best Quality - Limited Free)</option>
+              <option value="gemini-2.0-flash">Gemini 2.0 Flash (Free)</option>
+              <option value="gemini-1.5-flash">Gemini 1.5 Flash (Free)</option>
+            </select>
+            <div class="hint">2.5 Flash is the latest free model. 2.5 Pro has the best quality but limited free requests.</div>
+          </div>
+        </div>
+
+        <!-- App Info -->
+        <div class="card settings-section">
+          <div class="settings-section__title"><span class="icon">ℹ️</span> About</div>
+          <div style="font-size: var(--text-sm); color: var(--text-secondary); line-height: 1.8;">
+            <p><strong>MidSchool Manager</strong> v1.0.0</p>
+            <p>A class management app for Moroccan middle school (collège) teachers.</p>
+            <p>All data is stored locally in your browser — nothing is sent to any server.</p>
+            <p style="margin-top: var(--space-sm);">
+              <strong>Features:</strong> Lesson Records, Materials Tracker, Lesson Plans, Calendar, Student Management, Assessments, Remedial Work Tracking.
+            </p>
+          </div>
+        </div>
+
+        <!-- Danger Zone -->
+        <div class="card settings-section">
+          <div class="danger-zone">
+            <div class="danger-zone__title">⚠️ Danger Zone</div>
+            <div class="danger-zone__desc">These actions are irreversible. Make sure to export a backup first.</div>
+            <div style="display: flex; flex-wrap: wrap; gap: var(--space-sm);">
+              <button class="btn btn-danger" onclick="MSM.SettingsPage.clearAllData()">🗑️ Clear All Data</button>
+              <button class="btn btn-secondary" onclick="MSM.SettingsPage.resetToDefaults()">🔄 Reset to Defaults</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Save Bar -->
+    <div class="save-bar">
+      <button class="btn btn-secondary" onclick="MSM.SettingsPage.loadSettings()">Discard Changes</button>
+      <button class="btn btn-primary" onclick="MSM.SettingsPage.saveSettings()">💾 Save Settings</button>
+    </div>
+  </main>
+
+  <script src="js/storage.js"></script>
+  <script src="js/data-models.js"></script>
+  <script src="js/ui-helpers.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/settings.js"></script>
+</body>
+</html>

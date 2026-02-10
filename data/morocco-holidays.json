@@ -1,0 +1,143 @@
+{
+  "academicYear": "2025-2026",
+  "country": "Morocco",
+  "description": "Moroccan public holidays and school vacation periods for the 2025-2026 academic year",
+  "holidays": [
+    {
+      "name": "Rentrée Scolaire",
+      "nameEn": "Back to School",
+      "date": "2025-09-01",
+      "endDate": null,
+      "type": "academic",
+      "isSchoolDay": true
+    },
+    {
+      "name": "Eid Al Mawlid Annabawi",
+      "nameEn": "Prophet's Birthday",
+      "date": "2025-09-05",
+      "endDate": "2025-09-06",
+      "type": "religious",
+      "isSchoolDay": false
+    },
+    {
+      "name": "Vacances de la Toussaint",
+      "nameEn": "All Saints' Vacation",
+      "date": "2025-10-26",
+      "endDate": "2025-11-03",
+      "type": "vacation",
+      "isSchoolDay": false
+    },
+    {
+      "name": "Anniversaire de la Marche Verte",
+      "nameEn": "Green March Anniversary",
+      "date": "2025-11-06",
+      "endDate": null,
+      "type": "national",
+      "isSchoolDay": false
+    },
+    {
+      "name": "Fête de l'Indépendance",
+      "nameEn": "Independence Day",
+      "date": "2025-11-18",
+      "endDate": null,
+      "type": "national",
+      "isSchoolDay": false
+    },
+    {
+      "name": "Vacances de Noël",
+      "nameEn": "Winter Vacation",
+      "date": "2025-12-21",
+      "endDate": "2026-01-05",
+      "type": "vacation",
+      "isSchoolDay": false
+    },
+    {
+      "name": "Manifeste de l'Indépendance",
+      "nameEn": "Independence Manifesto Day",
+      "date": "2026-01-11",
+      "endDate": null,
+      "type": "national",
+      "isSchoolDay": false
+    },
+    {
+      "name": "Yennayer",
+      "nameEn": "Amazigh New Year",
+      "date": "2026-01-14",
+      "endDate": null,
+      "type": "national",
+      "isSchoolDay": false
+    },
+    {
+      "name": "Vacances de Février",
+      "nameEn": "February / Mid-term Vacation",
+      "date": "2026-02-08",
+      "endDate": "2026-02-16",
+      "type": "vacation",
+      "isSchoolDay": false
+    },
+    {
+      "name": "Ramadan (début estimé)",
+      "nameEn": "Ramadan Start (estimated)",
+      "date": "2026-02-18",
+      "endDate": null,
+      "type": "religious",
+      "isSchoolDay": true
+    },
+    {
+      "name": "Eid Al Fitr (estimé)",
+      "nameEn": "Eid Al Fitr (estimated)",
+      "date": "2026-03-20",
+      "endDate": "2026-03-22",
+      "type": "religious",
+      "isSchoolDay": false
+    },
+    {
+      "name": "Vacances de Printemps",
+      "nameEn": "Spring Vacation",
+      "date": "2026-04-05",
+      "endDate": "2026-04-20",
+      "type": "vacation",
+      "isSchoolDay": false
+    },
+    {
+      "name": "Fête du Travail",
+      "nameEn": "Labour Day",
+      "date": "2026-05-01",
+      "endDate": null,
+      "type": "national",
+      "isSchoolDay": false
+    },
+    {
+      "name": "Eid Al Adha (estimé)",
+      "nameEn": "Eid Al Adha (estimated)",
+      "date": "2026-05-27",
+      "endDate": "2026-05-29",
+      "type": "religious",
+      "isSchoolDay": false
+    },
+    {
+      "name": "Fatih Muharram (estimé)",
+      "nameEn": "Islamic New Year (estimated)",
+      "date": "2026-06-17",
+      "endDate": null,
+      "type": "religious",
+      "isSchoolDay": false
+    },
+    {
+      "name": "Fin de l'Année Scolaire",
+      "nameEn": "End of School Year",
+      "date": "2026-07-04",
+      "endDate": null,
+      "type": "academic",
+      "isSchoolDay": false
+    },
+    {
+      "name": "Fête du Trône",
+      "nameEn": "Throne Day",
+      "date": "2026-07-30",
+      "endDate": null,
+      "type": "national",
+      "isSchoolDay": false
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir:*)",
+      "Bash(Select-Object FullName)",
+      "Bash(for f in *.html)",
+      "Bash(do sed -i 's|icons/icon-192.png|icons/icon-192.svg|g' \"$f\")",
+      "Bash(done)"
+    ]
+  }
+}
