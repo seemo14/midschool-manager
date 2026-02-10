@@ -1,39 +1,40 @@
-var CACHE_NAME = 'msm-cache-v1';
+var CACHE_NAME = 'msm-cache-v2';
 
+// Use relative paths so it works on any subdirectory (e.g. GitHub Pages /repo-name/)
 var CORE_ASSETS = [
-  '/',
-  '/index.html',
-  '/lessons.html',
-  '/materials.html',
-  '/plans.html',
-  '/calendar.html',
-  '/students.html',
-  '/assessments.html',
-  '/remedial.html',
-  '/settings.html',
-  '/css/main.css',
-  '/js/storage.js',
-  '/js/data-models.js',
-  '/js/csv-parser.js',
-  '/js/ui-helpers.js',
-  '/js/ai-service.js',
-  '/js/curriculum.js',
-  '/js/ics-parser.js',
-  '/js/app.js',
-  '/js/dashboard.js',
-  '/js/lessons.js',
-  '/js/materials.js',
-  '/js/plans.js',
-  '/js/calendar-view.js',
-  '/js/students.js',
-  '/js/assessments.js',
-  '/js/remedial.js',
-  '/js/settings.js',
-  '/js/attendance.js',
-  '/js/reports.js',
-  '/manifest.json',
-  '/icons/icon-192.svg',
-  '/icons/icon-512.svg'
+  './',
+  './index.html',
+  './lessons.html',
+  './materials.html',
+  './plans.html',
+  './calendar.html',
+  './students.html',
+  './assessments.html',
+  './remedial.html',
+  './settings.html',
+  './css/main.css',
+  './js/storage.js',
+  './js/data-models.js',
+  './js/csv-parser.js',
+  './js/ui-helpers.js',
+  './js/ai-service.js',
+  './js/curriculum.js',
+  './js/ics-parser.js',
+  './js/app.js',
+  './js/dashboard.js',
+  './js/lessons.js',
+  './js/materials.js',
+  './js/plans.js',
+  './js/calendar-view.js',
+  './js/students.js',
+  './js/assessments.js',
+  './js/remedial.js',
+  './js/settings.js',
+  './js/attendance.js',
+  './js/reports.js',
+  './manifest.json',
+  './icons/icon-192.svg',
+  './icons/icon-512.svg'
 ];
 
 // Install: pre-cache the core app shell
@@ -93,8 +94,8 @@ self.addEventListener('fetch', function(event) {
         return fetchAndCache(request);
       }).catch(function() {
         // Offline fallback for HTML pages
-        if (request.headers.get('Accept').indexOf('text/html') !== -1) {
-          return caches.match('/index.html');
+        if (request.headers.get('Accept') && request.headers.get('Accept').indexOf('text/html') !== -1) {
+          return caches.match('./index.html');
         }
       })
     );

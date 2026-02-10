@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head><title>Generate PNG Icons</title></head>
+<body>
+<h2>PNG Icon Generator for MidSchool Manager</h2>
+<p>Click each button to download the PNG icon, then save it to the <code>icons/</code> folder.</p>
+
+<div id="previews" style="display:flex;gap:20px;flex-wrap:wrap;margin:20px 0"></div>
+
+<script>
+var sizes = [
+  { name: 'icon-192.png', size: 192 },
+  { name: 'icon-512.png', size: 512 },
+  { name: 'icon-maskable-512.png', size: 512, maskable: true }
+];
+
+function drawIcon(canvas, size, maskable) {
+  var ctx = canvas.getContext('2d');
+  canvas.width = size;
+  canvas.height = size;
+
+  // Background
+  ctx.fillStyle = '#4F46E5';
+  if (maskable) {
+    // Maskable: fill entire canvas (safe zone is inner 80%)
+    ctx.fillRect(0, 0, size, size);
+  } else {
+    // Regular: rounded rectangle
+    var r = size * 0.15;
+    ctx.beginPath();
+    ctx.moveTo(r, 0);
+    ctx.lineTo(size - r, 0);
+    ctx.quadraticCurveTo(size, 0, size, r);
+    ctx.lineTo(size, size - r);
+    ctx.quadraticCurveTo(size, size, size - r, size);
+    ctx.lineTo(r, size);
+    ctx.quadraticCurveTo(0, size, 0, size - r);
+    ctx.lineTo(0, r);
+    ctx.quadraticCurveTo(0, 0, r, 0);
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  // Book emoji (📚)
+  var emojiSize = size * 0.35;
+  ctx.font = emojiSize + 'px serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('📚', size / 2, size * 0.38);
+
+  // "MSM" text
+  var textSize = size * 0.18;
+  ctx.font = 'bold ' + textSize + 'px Arial, sans-serif';
+  ctx.fillStyle = '#FFFFFF';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('MSM', size / 2, size * 0.72);
+}
+
+var container = document.getElementById('previews');
+
+sizes.forEach(function(s) {
+  var div = document.createElement('div');
+  div.style.textAlign = 'center';
+
+  var canvas = document.createElement('canvas');
+  drawIcon(canvas, s.size, s.maskable);
+
+  var preview = document.createElement('canvas');
+  preview.width = 128;
+  preview.height = 128;
+  preview.getContext('2d').drawImage(canvas, 0, 0, 128, 128);
+  preview.style.border = '1px solid #ccc';
+  preview.style.borderRadius = '12px';
+
+  var btn = document.createElement('button');
+  btn.textContent = 'Download ' + s.name + ' (' + s.size + 'x' + s.size + ')';
+  btn.style.cssText = 'display:block;margin:8px auto;padding:8px 16px;background:#4F46E5;color:white;border:none;border-radius:6px;cursor:pointer';
+  btn.onclick = function() {
+    var link = document.createElement('a');
+    link.download = s.name;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  };
+
+  var label = document.createElement('div');
+  label.textContent = s.name + (s.maskable ? ' (maskable)' : '');
+  label.style.fontWeight = 'bold';
+  label.style.marginBottom = '4px';
+
+  div.appendChild(label);
+  div.appendChild(preview);
+  div.appendChild(btn);
+  container.appendChild(div);
+});
+</script>
+</body>
+</html>
