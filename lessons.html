@@ -10,7 +10,9 @@
   <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
-  <nav class="sidebar" id="sidebar">
+  <a href="#main" class="skip-link">Skip to main content</a>
+  <div class="offline-indicator" id="offlineIndicator" role="status" aria-live="polite"><span class="offline-indicator__icon" aria-hidden="true">&#9888;</span> You are currently offline. Changes are saved locally.</div>
+  <nav class="sidebar" id="sidebar" role="navigation" aria-label="Main navigation">
     <div class="sidebar__brand"><div class="sidebar__brand-icon">📚</div><span class="sidebar__brand-name">MidSchool Manager</span></div>
     <div class="sidebar__nav">
       <div class="sidebar__section-label">Main</div>
@@ -28,12 +30,12 @@
     <div class="sidebar__footer"><a href="settings.html" class="sidebar__link" data-nav="settings.html"><span class="sidebar__icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span class="sidebar__label">Settings</span></a></div>
   </nav>
   <div class="sidebar-overlay" id="sidebarOverlay"></div>
-  <header class="header">
+  <header class="header" role="banner">
     <button class="hamburger" id="hamburgerBtn" aria-label="Toggle navigation"><span class="hamburger__line"></span><span class="hamburger__line"></span><span class="hamburger__line"></span></button>
     <div class="header__inner"><h1 class="header__title" data-header-title>Lesson Records</h1><div class="header__info" data-header-info></div></div>
   </header>
 
-  <main class="main-content">
+  <main class="main-content" id="main" role="main">
     <div class="page-header">
       <h2>Lesson Records</h2>
       <div class="page-header__actions">
@@ -56,6 +58,7 @@
   <script src="js/data-models.js"></script>
   <script src="js/ui-helpers.js"></script>
   <script src="js/ai-service.js"></script>
+  <script src="js/validation.js"></script>
   <script src="js/app.js"></script>
   <script src="js/lessons.js"></script>
 </body>

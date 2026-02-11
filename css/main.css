@@ -1002,10 +1002,23 @@ input.input-error:focus, select.input-error:focus, textarea.input-error:focus { 
    ============================================================ */
 
 @media print {
-  .sidebar, .header, .hamburger, .sidebar-overlay { display: none !important; }
-  .main-content { margin: 0 !important; padding: 0 !important; }
-  body { background: #fff; color: #000; }
-  .card { box-shadow: none; border: 1px solid #ccc; }
+  .sidebar, .header, .hamburger, .sidebar-overlay,
+  .filter-bar, .page-header__actions, .btn,
+  .msm-toast-container, .modal-backdrop, .modal,
+  .skip-link, .offline-indicator { display: none !important; }
+  .main-content { margin: 0 !important; padding: 12px !important; }
+  body { background: #fff !important; color: #000 !important; }
+  .card { box-shadow: none !important; border: 1px solid #ccc; break-inside: avoid; }
+  .stat-card { break-inside: avoid; box-shadow: none !important; border: 1px solid #ccc; }
+  .table-wrap { border: 1px solid #999; overflow: visible; }
+  .table-wrap table { min-width: 0; }
+  .table-wrap th { background: #f0f0f0 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .table-wrap tr { break-inside: avoid; }
+  .badge { border: 1px solid #999; }
+  a { color: #000 !important; text-decoration: none !important; }
+  h2, h3 { break-after: avoid; }
+  .page-header { border-bottom: 2px solid #000; padding-bottom: 8px; margin-bottom: 16px; }
+  .page-header h2 { font-size: 18pt; }
 }
 
 
@@ -1128,6 +1141,66 @@ input.input-error:focus, select.input-error:focus, textarea.input-error:focus { 
 .dark-mode-toggle__icon {
   font-size: 16px;
 }
+
+/* --- Dark mode: form inputs & select dropdown arrow --- */
+[data-theme="dark"] select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%239CA3AF' d='M6 8.825a.5.5 0 0 1-.354-.146L2.11 5.143a.5.5 0 0 1 .707-.707L6 7.618l3.182-3.182a.5.5 0 0 1 .707.707L6.354 8.679A.5.5 0 0 1 6 8.825z'/%3E%3C/svg%3E");
+}
+
+/* --- Dark mode: badge text colors --- */
+[data-theme="dark"] .badge-success { color: #6EE7B7; }
+[data-theme="dark"] .badge-warning { color: #FCD34D; }
+[data-theme="dark"] .badge-danger  { color: #FCA5A5; }
+[data-theme="dark"] .badge-info    { color: #A5B4FC; }
+[data-theme="dark"] .badge-purple  { color: #C4B5FD; }
+
+/* --- Dark mode: grade sheet preview --- */
+[data-theme="dark"] .grade-sheet-preview {
+  background: #1F2937;
+  border-color: #374151;
+}
+[data-theme="dark"] .grade-sheet-preview__school { color: #A5B4FC; }
+[data-theme="dark"] .grade-sheet-preview__info { color: #9CA3AF; }
+[data-theme="dark"] .grade-sheet-preview th { background: #312E81; color: #E0E7FF; }
+[data-theme="dark"] .grade-sheet-preview th,
+[data-theme="dark"] .grade-sheet-preview td { border-color: #4B5563; }
+[data-theme="dark"] .grade-sheet-preview .avg-col { background: #312E81; }
+[data-theme="dark"] .grade-sheet-preview .pass { color: #34D399; }
+[data-theme="dark"] .grade-sheet-preview .fail { color: #F87171; }
+[data-theme="dark"] .grade-sheet-preview tfoot td { background: #374151; }
+
+/* --- Dark mode: confirm dialog & modal close button --- */
+[data-theme="dark"] .modal-close-btn { color: #9CA3AF; }
+[data-theme="dark"] .modal-close-btn:hover { background: #374151; color: #F9FAFB; }
+
+/* --- Dark mode: kanban board --- */
+[data-theme="dark"] .kanban-col { background: #111827; }
+[data-theme="dark"] .kanban-card { background: #1F2937; border-color: #374151; }
+
+/* --- Dark mode: stat cards --- */
+[data-theme="dark"] .stat-card { background: #1F2937; border-color: #374151; }
+
+/* --- Dark mode: empty state --- */
+[data-theme="dark"] .empty-state__title { color: #F9FAFB; }
+
+/* --- Dark mode: scrollbar --- */
+[data-theme="dark"] ::-webkit-scrollbar-thumb { background: #4B5563; }
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover { background: #6B7280; }
+
+/* --- Dark mode: welcome modal inline styles override --- */
+[data-theme="dark"] .msm-welcome-wrapper .msm-welcome-text { color: #9CA3AF; }
+[data-theme="dark"] .msm-welcome-wrapper .msm-welcome-field input {
+  background: #374151;
+  border-color: #4B5563;
+  color: #F9FAFB;
+}
+[data-theme="dark"] .msm-welcome-wrapper .msm-welcome-field input:focus {
+  border-color: #818CF8;
+  box-shadow: 0 0 0 3px rgba(129,140,248,0.2);
+}
+[data-theme="dark"] .msm-welcome-footer { border-top-color: #374151; }
+[data-theme="dark"] .msm-btn--secondary { background: #374151; color: #D1D5DB; border-color: #4B5563; }
+[data-theme="dark"] .msm-btn--secondary:hover { background: #4B5563; }
 
 /* =====================================================================
    23. PRINT-READY GRADE SHEETS
@@ -1266,4 +1339,145 @@ input.input-error:focus, select.input-error:focus, textarea.input-error:focus { 
   body.print-grade-sheet .grade-sheet-preview__header {
     border-bottom: 2px solid #000;
   }
+}
+
+
+/* ============================================================
+   24. ACCESSIBILITY - SKIP LINK
+   ============================================================ */
+
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: var(--space-md);
+  background: var(--primary);
+  color: #fff;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  z-index: 9999;
+  transition: top var(--transition-fast);
+  text-decoration: none;
+}
+
+.skip-link:focus {
+  top: 0;
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+/* Focus-visible outlines for keyboard navigation */
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+[data-theme="dark"] :focus-visible {
+  outline-color: #818CF8;
+}
+
+/* ============================================================
+   25. OFFLINE / ONLINE INDICATOR
+   ============================================================ */
+
+.offline-indicator {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--warning);
+  color: #000;
+  text-align: center;
+  padding: 6px var(--space-md);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  z-index: 3000;
+  transform: translateY(100%);
+  transition: transform var(--transition-normal);
+}
+
+.offline-indicator--visible {
+  transform: translateY(0);
+}
+
+.offline-indicator__icon {
+  margin-right: 6px;
+}
+
+
+/* ============================================================
+   26. FORM VALIDATION STATES
+   ============================================================ */
+
+.field-valid {
+  border-color: var(--success) !important;
+}
+
+.field-valid:focus {
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.12) !important;
+}
+
+.field-invalid {
+  border-color: var(--danger) !important;
+}
+
+.field-invalid:focus {
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12) !important;
+}
+
+.validation-message {
+  font-size: var(--text-xs);
+  margin-top: 4px;
+  display: none;
+}
+
+.validation-message--visible {
+  display: block;
+}
+
+.validation-message--error {
+  color: var(--danger);
+}
+
+.validation-message--success {
+  color: var(--success);
+}
+
+/* ============================================================
+   27. KEYBOARD SHORTCUTS HELP PANEL
+   ============================================================ */
+
+.shortcuts-panel {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px var(--space-lg);
+  align-items: center;
+}
+
+.shortcuts-panel kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  padding: 2px 8px;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xs);
+  box-shadow: 0 1px 0 var(--border);
+  color: var(--text);
+}
+
+.shortcuts-panel__desc {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+[data-theme="dark"] .shortcuts-panel kbd {
+  background: #374151;
+  border-color: #4B5563;
+  box-shadow: 0 1px 0 #4B5563;
 }

@@ -98,6 +98,9 @@
 
             // i. Register service worker for PWA
             App.registerServiceWorker();
+
+            // j. Offline/online status indicator
+            App.setupOfflineIndicator();
         },
 
         /* ----- showWelcomeModal -------------------------------------- */
@@ -361,26 +364,95 @@
         /* ----- setupKeyboardShortcuts -------------------------------- */
 
         /**
-         * Global keyboard shortcuts: Escape closes modals.
+         * Global keyboard shortcuts:
+         *   Escape       - Close modals / sidebar
+         *   Alt+1..9     - Navigate to pages
+         *   Alt+Shift+?  - Show shortcuts help
          */
         setupKeyboardShortcuts: function () {
+            var NAV_SHORTCUTS = {
+                '1': 'index.html',
+                '2': 'lessons.html',
+                '3': 'materials.html',
+                '4': 'plans.html',
+                '5': 'calendar.html',
+                '6': 'students.html',
+                '7': 'assessments.html',
+                '8': 'remedial.html',
+                '9': 'settings.html'
+            };
+
             document.addEventListener('keydown', function (e) {
+                var tag = e.target.tagName;
+                var isInput = (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || e.target.isContentEditable);
+
                 if (e.key === 'Escape' || e.keyCode === 27) {
                     if (MSM.UI && typeof MSM.UI.closeModal === 'function') {
                         MSM.UI.closeModal();
                     } else {
-                        // Fallback: remove topmost modal overlay
                         var overlays = document.querySelectorAll('.msm-modal-overlay');
                         if (overlays.length > 0) {
                             var last = overlays[overlays.length - 1];
                             last.parentNode.removeChild(last);
                         }
                     }
-
-                    // Also close sidebar on mobile
                     document.body.classList.remove('sidebar-open');
+                    return;
+                }
+
+                // Alt+number quick navigation
+                if (e.altKey && !e.ctrlKey && !e.metaKey && !isInput) {
+                    var page = NAV_SHORTCUTS[e.key];
+                    if (page) {
+                        e.preventDefault();
+                        window.location.href = page;
+                        return;
+                    }
+                }
+
+                // Alt+Shift+/ — keyboard shortcuts help
+                if (e.altKey && e.shiftKey && (e.key === '?' || e.key === '/')) {
+                    e.preventDefault();
+                    App.showShortcutsHelp();
                 }
             });
+        },
+
+        /**
+         * Display a modal listing all keyboard shortcuts.
+         */
+        showShortcutsHelp: function () {
+            var shortcuts = [
+                { key: 'Esc', desc: 'Close modal / sidebar' },
+                { key: 'Alt+1', desc: 'Go to Dashboard' },
+                { key: 'Alt+2', desc: 'Go to Lesson Records' },
+                { key: 'Alt+3', desc: 'Go to Materials' },
+                { key: 'Alt+4', desc: 'Go to Lesson Plans' },
+                { key: 'Alt+5', desc: 'Go to Calendar' },
+                { key: 'Alt+6', desc: 'Go to Students' },
+                { key: 'Alt+7', desc: 'Go to Assessments' },
+                { key: 'Alt+8', desc: 'Go to Remedial Work' },
+                { key: 'Alt+9', desc: 'Go to Settings' },
+                { key: 'Alt+Shift+?', desc: 'Show this help' }
+            ];
+
+            var html = '<div class="shortcuts-panel">';
+            for (var i = 0; i < shortcuts.length; i++) {
+                html += '<kbd>' + shortcuts[i].key + '</kbd>';
+                html += '<span class="shortcuts-panel__desc">' + shortcuts[i].desc + '</span>';
+            }
+            html += '</div>';
+
+            var container = document.createElement('div');
+            container.innerHTML = html;
+
+            if (MSM.UI && typeof MSM.UI.showModal === 'function') {
+                MSM.UI.showModal({
+                    title: 'Keyboard Shortcuts',
+                    content: container,
+                    showClose: true
+                });
+            }
         },
 
         /* ----- setupSidebarCollapse ---------------------------------- */
@@ -550,6 +622,32 @@
                 if (academicYear) { parts.push(academicYear); }
                 headerInfo.textContent = parts.join(' | ');
             }
+        },
+
+        /* ----- getCurrentAcademicYear -------------------------------- */
+
+        /* ----- setupOfflineIndicator -------------------------------- */
+
+        /**
+         * Monitor online/offline status and show/hide the indicator bar.
+         */
+        setupOfflineIndicator: function () {
+            var indicator = document.getElementById('offlineIndicator');
+            if (!indicator) return;
+
+            function updateStatus() {
+                if (navigator.onLine) {
+                    indicator.classList.remove('offline-indicator--visible');
+                } else {
+                    indicator.classList.add('offline-indicator--visible');
+                }
+            }
+
+            window.addEventListener('online', updateStatus);
+            window.addEventListener('offline', updateStatus);
+
+            // Check initial state
+            updateStatus();
         },
 
         /* ----- getCurrentAcademicYear -------------------------------- */

@@ -86,8 +86,10 @@
   </style>
 </head>
 <body>
+  <a href="#main" class="skip-link">Skip to main content</a>
+  <div class="offline-indicator" id="offlineIndicator" role="status" aria-live="polite"><span class="offline-indicator__icon" aria-hidden="true">&#9888;</span> You are currently offline. Changes are saved locally.</div>
   <!-- Sidebar -->
-  <nav class="sidebar" id="sidebar">
+  <nav class="sidebar" id="sidebar" role="navigation" aria-label="Main navigation">
     <div class="sidebar__brand">
       <div class="sidebar__brand-icon">📚</div>
       <span class="sidebar__brand-name">MidSchool Manager</span>
@@ -141,7 +143,7 @@
   <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
   <!-- Header -->
-  <header class="header">
+  <header class="header" role="banner">
     <button class="hamburger" id="hamburgerBtn" aria-label="Toggle navigation">
       <span class="hamburger__line"></span>
       <span class="hamburger__line"></span>
@@ -154,7 +156,7 @@
   </header>
 
   <!-- Main Content -->
-  <main class="main-content">
+  <main class="main-content" id="main" role="main">
     <div class="settings-grid">
       <!-- LEFT COLUMN -->
       <div>
@@ -357,6 +359,7 @@
   <script src="js/storage.js"></script>
   <script src="js/data-models.js"></script>
   <script src="js/ui-helpers.js"></script>
+  <script src="js/validation.js"></script>
   <script src="js/app.js"></script>
   <script src="js/settings.js"></script>
 </body>
