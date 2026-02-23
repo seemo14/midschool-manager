@@ -98,6 +98,18 @@
 
             // i. Register service worker for PWA
             App.registerServiceWorker();
+
+            // j. Bottom navigation (mobile)
+            App.setupBottomNav();
+
+            // k. Breadcrumbs
+            App.setupBreadcrumbs();
+
+            // l. Mobile back button
+            App.setupMobileBackButton();
+
+            // m. Header search button
+            App.setupHeaderSearch();
         },
 
         /* ----- showWelcomeModal -------------------------------------- */
@@ -365,19 +377,33 @@
          */
         setupKeyboardShortcuts: function () {
             document.addEventListener('keydown', function (e) {
+                // Ctrl+K / Cmd+K opens command palette
+                if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                    e.preventDefault();
+                    if (MSM.CommandPalette) { MSM.CommandPalette.open(); }
+                    return;
+                }
+
                 if (e.key === 'Escape' || e.keyCode === 27) {
+                    // Close command palette first if open
+                    if (MSM.CommandPalette && MSM.CommandPalette.isOpen && MSM.CommandPalette.isOpen()) {
+                        MSM.CommandPalette.close();
+                        return;
+                    }
+                    // Close sidepanel if open
+                    if (MSM.Sidepanel && MSM.Sidepanel.isOpen && MSM.Sidepanel.isOpen()) {
+                        MSM.Sidepanel.close();
+                        return;
+                    }
                     if (MSM.UI && typeof MSM.UI.closeModal === 'function') {
                         MSM.UI.closeModal();
                     } else {
-                        // Fallback: remove topmost modal overlay
                         var overlays = document.querySelectorAll('.msm-modal-overlay');
                         if (overlays.length > 0) {
                             var last = overlays[overlays.length - 1];
                             last.parentNode.removeChild(last);
                         }
                     }
-
-                    // Also close sidebar on mobile
                     document.body.classList.remove('sidebar-open');
                 }
             });
@@ -495,6 +521,147 @@
                     console.log('[MSM] Service Worker registered');
                 }).catch(function (err) {
                     console.log('[MSM] Service Worker registration failed:', err);
+                });
+            }
+        },
+
+        /* ----- setupBottomNav ---------------------------------------- */
+
+        setupBottomNav: function () {
+            var bottomNav = document.getElementById('bottomNav');
+            if (!bottomNav) return;
+
+            // Highlight active item
+            var filename = getCurrentPageFilename();
+            var items = bottomNav.querySelectorAll('.bottom-nav__item[data-nav]');
+            for (var i = 0; i < items.length; i++) {
+                if (items[i].getAttribute('data-nav') === filename) {
+                    items[i].classList.add('bottom-nav__item--active');
+                }
+            }
+
+            // "More" button opens bottom sheet
+            var moreBtn = document.getElementById('bottomNavMore');
+            if (moreBtn) {
+                moreBtn.addEventListener('click', function () {
+                    App.showBottomSheet();
+                });
+            }
+        },
+
+        showBottomSheet: function () {
+            // Remove existing sheet
+            var existing = document.querySelector('.bottom-sheet-backdrop');
+            if (existing) { existing.parentNode.removeChild(existing); var s = document.querySelector('.bottom-sheet'); if (s) s.parentNode.removeChild(s); return; }
+
+            var moreLinks = [
+                { href: 'plans.html', icon: '✏️', label: 'Lesson Plans' },
+                { href: 'materials.html', icon: '📄', label: 'Materials' },
+                { href: 'calendar.html', icon: '📅', label: 'Calendar' },
+                { href: 'remedial.html', icon: '⚠️', label: 'Remedial Work' },
+                { href: 'settings.html', icon: '⚙️', label: 'Settings' }
+            ];
+
+            var backdrop = document.createElement('div');
+            backdrop.className = 'bottom-sheet-backdrop';
+
+            var sheet = document.createElement('div');
+            sheet.className = 'bottom-sheet';
+
+            var handle = document.createElement('div');
+            handle.className = 'bottom-sheet__handle';
+            sheet.appendChild(handle);
+
+            for (var i = 0; i < moreLinks.length; i++) {
+                var link = moreLinks[i];
+                var a = document.createElement('a');
+                a.className = 'bottom-sheet__item';
+                a.href = link.href;
+                a.innerHTML = '<span class="bottom-sheet__icon">' + link.icon + '</span>' + link.label;
+                sheet.appendChild(a);
+            }
+
+            function closeSheet() {
+                if (backdrop.parentNode) backdrop.parentNode.removeChild(backdrop);
+                if (sheet.parentNode) sheet.parentNode.removeChild(sheet);
+            }
+
+            backdrop.addEventListener('click', closeSheet);
+            document.body.appendChild(backdrop);
+            document.body.appendChild(sheet);
+        },
+
+        /* ----- setupBreadcrumbs -------------------------------------- */
+
+        setupBreadcrumbs: function () {
+            var breadcrumbEl = document.getElementById('breadcrumbs');
+            if (!breadcrumbEl) return;
+
+            var filename = getCurrentPageFilename();
+            var crumbs = [{ label: 'Home', href: 'index.html' }];
+
+            if (filename !== 'index.html' && filename !== '') {
+                var pageTitle = PAGE_NAV_MAP[filename] || filename;
+                crumbs.push({ label: pageTitle, href: filename });
+            }
+
+            // Check for sub-context (e.g. ?class=cls_001)
+            var params = new URLSearchParams(window.location.search);
+            var classId = params.get('class') || params.get('classId');
+            if (classId && MSM.Storage) {
+                var classes = MSM.Storage.getData('msm_classes') || [];
+                for (var i = 0; i < classes.length; i++) {
+                    if (classes[i].id === classId) {
+                        crumbs.push({ label: classes[i].name || classId });
+                        break;
+                    }
+                }
+            }
+
+            var html = '';
+            for (var j = 0; j < crumbs.length; j++) {
+                if (j > 0) html += '<span class="breadcrumb__sep">/</span>';
+                if (j === crumbs.length - 1) {
+                    html += '<span class="breadcrumb__current">' + (MSM.UI ? MSM.UI.escapeHTML(crumbs[j].label) : crumbs[j].label) + '</span>';
+                } else {
+                    html += '<a href="' + crumbs[j].href + '" class="breadcrumb__link">' + (MSM.UI ? MSM.UI.escapeHTML(crumbs[j].label) : crumbs[j].label) + '</a>';
+                }
+            }
+            breadcrumbEl.innerHTML = html;
+        },
+
+        /* ----- setupMobileBackButton --------------------------------- */
+
+        setupMobileBackButton: function () {
+            if (window.innerWidth > 767) return;
+            var headerTitle = document.querySelector('[data-header-title]');
+            if (!headerTitle) return;
+
+            var filename = getCurrentPageFilename();
+            if (filename === 'index.html' || filename === '') return;
+
+            var backBtn = document.createElement('button');
+            backBtn.className = 'header__back-btn';
+            backBtn.setAttribute('aria-label', 'Go back');
+            backBtn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>';
+            backBtn.addEventListener('click', function () {
+                if (document.referrer && document.referrer.indexOf(window.location.host) !== -1) {
+                    window.history.back();
+                } else {
+                    window.location.href = 'index.html';
+                }
+            });
+
+            headerTitle.parentNode.insertBefore(backBtn, headerTitle);
+        },
+
+        /* ----- setupHeaderSearch ------------------------------------- */
+
+        setupHeaderSearch: function () {
+            var searchBtn = document.getElementById('headerSearchBtn');
+            if (searchBtn) {
+                searchBtn.addEventListener('click', function () {
+                    if (MSM.CommandPalette) { MSM.CommandPalette.open(); }
                 });
             }
         },

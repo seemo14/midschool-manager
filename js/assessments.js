@@ -564,5 +564,19 @@
         document.getElementById('btnExportGrades').click();
       }
     });
+
+    // Handle ?action= query params from command palette
+    var urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('action') === 'grade') {
+      if (window.history && window.history.replaceState) {
+        window.history.replaceState({}, '', window.location.pathname);
+      }
+      setTimeout(function () { document.getElementById('btnAddGrade').click(); }, 300);
+    } else if (urlParams.get('action') === 'batch') {
+      if (window.history && window.history.replaceState) {
+        window.history.replaceState({}, '', window.location.pathname);
+      }
+      setTimeout(function () { document.getElementById('btnBatchGrade').click(); }, 300);
+    }
   });
 })();

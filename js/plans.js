@@ -193,6 +193,15 @@
 
     loadPlans();
 
+    // Handle ?action=new from command palette
+    var urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('action') === 'new') {
+      if (window.history && window.history.replaceState) {
+        window.history.replaceState({}, '', window.location.pathname);
+      }
+      setTimeout(function () { document.getElementById('btnNewPlan').click(); }, 300);
+    }
+
     // =====================================================================
     // Filters
     // =====================================================================
@@ -338,11 +347,23 @@
         if (p.differentiation) html += '<div class="plan-view-section"><h4>Differentiation</h4><p>' + UI.escapeHTML(p.differentiation) + '</p></div>';
         if (p.notes) html += '<div class="plan-view-section"><h4>Notes</h4><p>' + UI.escapeHTML(p.notes) + '</p></div>';
 
-        var footerHTML = '<button class="btn btn-secondary" onclick="MSM.UI.closeModal()">Close</button>' +
-          '<button class="btn btn-secondary" onclick="MSM.PlansPage.exportSingle(\'' + p.id + '\')">Export</button>' +
-          '<button class="btn btn-secondary" style="background:var(--teal,#0D9488);color:#fff;border-color:var(--teal,#0D9488)" onclick="MSM.UI.closeModal();MSM.PlansPage.generateLogbook(\'' + p.id + '\')">Generate Logbook</button>' +
-          '<button class="btn btn-primary" onclick="MSM.UI.closeModal();MSM.PlansPage.edit(\'' + p.id + '\')">Edit</button>';
-        UI.showModal(UI.escapeHTML(p.title), html, { width: '650px', footerHTML: footerHTML });
+        if (MSM.Sidepanel) {
+          MSM.Sidepanel.open({
+            title: UI.escapeHTML(p.title),
+            content: html,
+            actions: [
+              { label: 'Edit', className: 'btn-primary', onClick: function () { MSM.Sidepanel.close(); MSM.PlansPage.edit(id); } },
+              { label: 'Export', className: 'btn-secondary', onClick: function () { MSM.PlansPage.exportSingle(id); } },
+              { label: 'AI Logbook', className: 'btn-secondary', onClick: function () { MSM.Sidepanel.close(); MSM.PlansPage.generateLogbook(id); } }
+            ]
+          });
+        } else {
+          var footerHTML = '<button class="btn btn-secondary" onclick="MSM.UI.closeModal()">Close</button>' +
+            '<button class="btn btn-secondary" onclick="MSM.PlansPage.exportSingle(\'' + p.id + '\')">Export</button>' +
+            '<button class="btn btn-secondary" style="background:var(--teal,#0D9488);color:#fff;border-color:var(--teal,#0D9488)" onclick="MSM.UI.closeModal();MSM.PlansPage.generateLogbook(\'' + p.id + '\')">Generate Logbook</button>' +
+            '<button class="btn btn-primary" onclick="MSM.UI.closeModal();MSM.PlansPage.edit(\'' + p.id + '\')">Edit</button>';
+          UI.showModal(UI.escapeHTML(p.title), html, { width: '650px', footerHTML: footerHTML });
+        }
       },
 
       edit: function (id) {

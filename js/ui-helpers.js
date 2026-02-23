@@ -268,6 +268,11 @@
     document.addEventListener("keydown", handleEsc);
     _currentModal._escHandler = handleEsc;
 
+    // Full-screen modal on mobile
+    if (window.innerWidth <= 767) {
+      modal.classList.add('modal--fullscreen');
+    }
+
     // Focus trap
     _setupFocusTrap(modal);
 

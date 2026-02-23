@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MidSchool Manager - Teaching Hub</title>
+  <meta name="theme-color" content="#4F46E5">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-192.svg">
+  <link rel="stylesheet" href="css/main.css">
+  <style>
+    /* ========== TEACHING HUB STYLES ========== */
+    .hub-tabs { display:flex; gap:4px; border-bottom:2px solid var(--border); margin-bottom:24px; }
+    .hub-tab { padding:10px 20px; font-size:14px; font-weight:600; color:var(--text-secondary); cursor:pointer; border:none; background:none; border-bottom:3px solid transparent; margin-bottom:-2px; transition:all .15s; border-radius:4px 4px 0 0; }
+    .hub-tab:hover { color:var(--text); background:var(--bg-secondary); }
+    .hub-tab.active { color:var(--primary); border-bottom-color:var(--primary); }
+    .hub-panel { display:none; }
+    .hub-panel.active { display:block; }
+
+    /* --- Paste area --- */
+    .paste-zone { position:relative; }
+    .paste-zone textarea { width:100%; min-height:200px; font-family:monospace; font-size:13px; line-height:1.6; padding:14px; resize:vertical; border:2px dashed var(--border); border-radius:var(--radius-lg); background:var(--bg-secondary); transition:border-color .2s; }
+    .paste-zone textarea:focus { border-color:var(--primary); outline:none; background:var(--card); }
+    .paste-zone textarea::placeholder { color:var(--text-tertiary); font-family:var(--font-sans,sans-serif); }
+
+    /* --- Parsed preview cards --- */
+    .parsed-lessons { display:grid; gap:10px; margin-top:16px; }
+    .parsed-row { display:grid; grid-template-columns:28px 1fr auto; gap:10px; align-items:start; background:var(--card); border:1px solid var(--border); border-radius:var(--radius-md); padding:12px 14px; }
+    .parsed-row__num { width:28px; height:28px; border-radius:50%; background:var(--primary); color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0; }
+    .parsed-row__fields { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+    .parsed-row__fields .f-full { grid-column:1/-1; }
+    .parsed-row__remove { padding:4px 8px; background:none; border:1px solid var(--border); border-radius:var(--radius-sm); cursor:pointer; color:var(--danger); font-size:12px; }
+    .parsed-row__remove:hover { background:var(--danger-light); }
+
+    /* --- Class selector grid --- */
+    .class-selector { display:flex; flex-wrap:wrap; gap:8px; padding:14px; background:var(--bg-secondary); border-radius:var(--radius-lg); border:1px solid var(--border); }
+    .class-pill { display:flex; align-items:center; gap:6px; padding:6px 12px; border-radius:var(--radius-full); border:2px solid var(--border); background:var(--card); font-size:13px; font-weight:600; cursor:pointer; transition:all .15s; user-select:none; }
+    .class-pill input { display:none; }
+    .class-pill.checked { border-color:currentColor; }
+    .class-pill .pill-dot { width:10px; height:10px; border-radius:50%; background:currentColor; display:none; }
+    .class-pill.checked .pill-dot { display:block; }
+
+    /* --- Generate controls --- */
+    .generate-bar { display:flex; gap:12px; align-items:flex-end; flex-wrap:wrap; padding:16px; background:var(--primary-50); border:1px solid var(--primary-100); border-radius:var(--radius-lg); margin-top:20px; }
+    .generate-bar .form-group { margin:0; flex:1; min-width:140px; }
+    .generate-bar label { font-size:12px; font-weight:600; color:var(--primary); text-transform:uppercase; letter-spacing:.04em; margin-bottom:4px; }
+
+    /* --- Logbook table (editable) --- */
+    .logbook-table-wrap { overflow-x:auto; border:1px solid var(--border); border-radius:var(--radius-lg); }
+    .logbook-table { width:100%; border-collapse:collapse; font-size:13px; }
+    .logbook-table th { background:var(--bg-secondary); padding:10px 12px; text-align:left; font-weight:600; font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--text-secondary); border-bottom:1px solid var(--border); white-space:nowrap; }
+    .logbook-table td { padding:8px 10px; border-bottom:1px solid var(--border-light); vertical-align:middle; }
+    .logbook-table tr:last-child td { border-bottom:none; }
+    .logbook-table tr:hover td { background:var(--bg-secondary); }
+    .logbook-table input[type=text], .logbook-table input[type=date], .logbook-table input[type=time], .logbook-table select, .logbook-table textarea { width:100%; padding:4px 6px; border:1px solid transparent; border-radius:4px; font-size:12px; background:transparent; font-family:inherit; }
+    .logbook-table input:focus, .logbook-table select:focus, .logbook-table textarea:focus { border-color:var(--primary); background:var(--card); outline:none; }
+    .logbook-table textarea { resize:none; height:40px; }
+    .logbook-table .class-dot { width:12px; height:12px; border-radius:50%; display:inline-block; flex-shrink:0; }
+    .logbook-table .row-include { width:18px; height:18px; cursor:pointer; }
+
+    /* --- Quick Log (per-class weekly view) --- */
+    .week-nav { display:flex; align-items:center; gap:12px; margin-bottom:16px; }
+    .week-nav__label { font-weight:700; font-size:16px; min-width:200px; text-align:center; }
+    .week-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:16px; }
+    .week-class-card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; }
+    .week-class-card__header { padding:12px 16px; display:flex; align-items:center; gap:10px; }
+    .week-class-card__name { font-weight:700; font-size:15px; }
+    .week-class-card__count { margin-left:auto; font-size:12px; color:var(--text-secondary); }
+    .week-class-card__lessons { padding:0; }
+    .week-lesson-row { display:grid; grid-template-columns:80px 1fr auto; align-items:center; gap:8px; padding:8px 14px; border-top:1px solid var(--border-light); font-size:13px; }
+    .week-lesson-row:first-child { border-top:none; }
+    .week-lesson-row .day-time { font-size:11px; color:var(--text-secondary); }
+    .week-lesson-row .topic-inp { flex:1; }
+    .week-lesson-row .status-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; cursor:pointer; }
+    .week-lesson-row .status-dot[data-status=completed] { background:var(--success); }
+    .week-lesson-row .status-dot[data-status=partial] { background:var(--warning); }
+    .week-lesson-row .status-dot[data-status=not_started] { background:var(--danger); }
+    .week-lesson-row .status-dot[data-status=skipped] { background:var(--text-tertiary); }
+    .week-add-btn { display:flex; align-items:center; justify-content:center; gap:6px; padding:8px 14px; border-top:1px solid var(--border-light); color:var(--text-tertiary); font-size:12px; cursor:pointer; transition:background .15s; border:none; background:none; width:100%; }
+    .week-add-btn:hover { background:var(--bg-secondary); color:var(--primary); }
+
+    /* --- Overview table --- */
+    .overview-table { width:100%; border-collapse:collapse; font-size:13px; }
+    .overview-table th { background:var(--bg-secondary); padding:10px 12px; text-align:left; font-weight:600; font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--text-secondary); border-bottom:2px solid var(--border); }
+    .overview-table td { padding:10px 12px; border-bottom:1px solid var(--border-light); vertical-align:middle; }
+    .overview-table tr:hover td { background:var(--bg-secondary); }
+    .progress-mini { height:6px; background:var(--bg-tertiary); border-radius:3px; overflow:hidden; min-width:80px; }
+    .progress-mini__bar { height:100%; background:var(--primary); border-radius:3px; transition:width .3s; }
+
+    /* --- Inline editing highlight --- */
+    .editing-cell { background:var(--primary-50) !important; }
+
+    /* section divider */
+    .hub-section { margin-bottom:24px; }
+    .hub-section__title { font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--text-secondary); margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+    .hub-section__title::after { content:''; flex:1; height:1px; background:var(--border-light); }
+
+    /* step badge */
+    .step-badge { width:22px; height:22px; border-radius:50%; background:var(--primary); color:#fff; display:inline-flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; flex-shrink:0; }
+
+    /* Info box */
+    .info-box { background:var(--primary-50); border:1px solid var(--primary-100); border-radius:var(--radius-md); padding:12px 14px; font-size:13px; color:var(--primary-dark,#1E1B4B); margin-bottom:16px; display:flex; gap:10px; align-items:flex-start; }
+    .info-box .info-icon { font-size:16px; flex-shrink:0; margin-top:1px; }
+
+    @media (max-width:767px) {
+      .parsed-row__fields { grid-template-columns:1fr; }
+      .generate-bar { flex-direction:column; }
+      .week-grid { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Sidebar -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar__brand"><div class="sidebar__brand-icon">📚</div><span class="sidebar__brand-name">MidSchool Manager</span></div>
+    <div class="sidebar__nav">
+      <div class="sidebar__section-label">Main</div>
+      <a href="index.html" class="sidebar__link" data-nav="index.html"><span class="sidebar__icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span><span class="sidebar__label">Dashboard</span></a>
+      <a href="teaching-hub.html" class="sidebar__link sidebar__link--active" data-nav="teaching-hub.html"><span class="sidebar__icon"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></span><span class="sidebar__label">Teaching Hub</span></a>
+      <a href="lessons.html" class="sidebar__link" data-nav="lessons.html"><span class="sidebar__icon"><svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><span class="sidebar__label">Lesson Records</span></a>
+      <a href="plans.html" class="sidebar__link" data-nav="plans.html"><span class="sidebar__icon"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></span><span class="sidebar__label">Lesson Plans</span></a>
+      <a href="calendar.html" class="sidebar__link" data-nav="calendar.html"><span class="sidebar__icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span><span class="sidebar__label">Calendar</span></a>
+      <a href="materials.html" class="sidebar__link" data-nav="materials.html"><span class="sidebar__icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span><span class="sidebar__label">Materials</span></a>
+      <div class="sidebar__section-label">Students</div>
+      <a href="students.html" class="sidebar__link" data-nav="students.html"><span class="sidebar__icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span class="sidebar__label">Students</span></a>
+      <a href="assessments.html" class="sidebar__link" data-nav="assessments.html"><span class="sidebar__icon"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span><span class="sidebar__label">Assessments</span></a>
+      <a href="remedial.html" class="sidebar__link" data-nav="remedial.html"><span class="sidebar__icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span><span class="sidebar__label">Remedial Work</span></a>
+    </div>
+    <div class="sidebar__divider"></div>
+    <div class="sidebar__footer"><a href="settings.html" class="sidebar__link" data-nav="settings.html"><span class="sidebar__icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span class="sidebar__label">Settings</span></a></div>
+  </nav>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <header class="header">
+    <button class="hamburger" id="hamburgerBtn" aria-label="Toggle navigation"><span class="hamburger__line"></span><span class="hamburger__line"></span><span class="hamburger__line"></span></button>
+    <div class="header__inner">
+      <h1 class="header__title" data-header-title>Teaching Hub</h1>
+      <div class="header__actions">
+        <button class="header__search-btn" id="headerSearchBtn" aria-label="Search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
+        <div class="header__info" data-header-info></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <nav class="breadcrumbs" id="breadcrumbs" aria-label="Breadcrumbs"></nav>
+    <div class="page-header">
+      <h2>Teaching Hub</h2>
+      <p style="color:var(--text-secondary);font-size:14px;margin-top:4px">Paste your scheme of work → select classes → generate all lesson logs at once</p>
+    </div>
+
+    <!-- Tabs -->
+    <div class="hub-tabs">
+      <button class="hub-tab active" data-tab="bulk">📋 Bulk Generate Logs</button>
+      <button class="hub-tab" data-tab="weekly">📅 Weekly Quick Log</button>
+      <button class="hub-tab" data-tab="overview">📊 Class Overview</button>
+    </div>
+
+    <!-- ===== TAB 1: BULK GENERATE ===== -->
+    <div class="hub-panel active" id="panel-bulk">
+
+      <div class="info-box">
+        <span class="info-icon">💡</span>
+        <div>
+          <strong>How it works:</strong> Paste your lesson plan or scheme of work below (any format — numbered list, table text, paragraphs). Each line/entry becomes one lesson row. Then choose which classes taught it, set the date and time, and click <strong>Generate Logs</strong> to create all lesson records at once.
+        </div>
+      </div>
+
+      <!-- Step 1: Paste -->
+      <div class="hub-section">
+        <div class="hub-section__title"><span class="step-badge">1</span> Paste Your Plan</div>
+        <div class="paste-zone">
+          <textarea id="pasteInput" placeholder="Paste your scheme of work, lesson plan, or any list here...
+
+Examples of what you can paste:
+• Unit 1 - Lesson 1: Present Simple - Introduction (pp. 10-12)
+• Lesson 2: Present Simple - Negatives and Questions
+• 3. Vocabulary - Family Members, Unit 2
+• Reading: The Daily Routine (textbook p.15)
+• Grammar: Past Simple - Regular Verbs pp.34-36
+• Speaking activity: Describe your family
+
+One lesson per line. The app will parse topic, focus, unit, and page references automatically."></textarea>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+          <button class="btn btn-primary" id="btnParsePlan">✨ Parse Plan</button>
+          <button class="btn btn-secondary" id="btnClearPaste">Clear</button>
+          <span id="parseStatus" style="align-self:center;font-size:13px;color:var(--text-secondary)"></span>
+        </div>
+      </div>
+
+      <!-- Step 2: Review parsed lessons (hidden until parsed) -->
+      <div id="parsedSection" style="display:none">
+        <div class="hub-section">
+          <div class="hub-section__title"><span class="step-badge">2</span> Review &amp; Edit Lessons <span style="font-weight:400;font-size:12px;color:var(--text-tertiary);text-transform:none;letter-spacing:0">(click any field to edit)</span></div>
+          <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center">
+            <button class="btn btn-secondary btn-sm" id="btnAddRow">+ Add Row</button>
+            <button class="btn btn-ghost btn-sm" id="btnRemoveAll" style="color:var(--danger)">Remove All</button>
+            <span id="rowCount" style="font-size:13px;color:var(--text-secondary);margin-left:8px"></span>
+          </div>
+          <div class="logbook-table-wrap">
+            <table class="logbook-table" id="parsedTable">
+              <thead>
+                <tr>
+                  <th style="width:32px">#</th>
+                  <th>Topic / Lesson Title</th>
+                  <th style="width:120px">Focus/Skill</th>
+                  <th style="width:110px">Unit</th>
+                  <th style="width:90px">Page</th>
+                  <th>Activities / Notes</th>
+                  <th style="width:90px">Homework</th>
+                  <th style="width:32px"></th>
+                </tr>
+              </thead>
+              <tbody id="parsedTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Step 3: Select classes and date -->
+        <div class="hub-section">
+          <div class="hub-section__title"><span class="step-badge">3</span> Select Classes &amp; Date</div>
+          <div style="margin-bottom:12px">
+            <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap">
+              <button class="btn btn-secondary btn-sm" id="btnSelectAllClasses">Select All</button>
+              <button class="btn btn-ghost btn-sm" id="btnSelectNoneClasses">None</button>
+              <div style="display:flex;gap:6px;align-items:center">
+                <label style="font-size:13px;font-weight:600">Year:</label>
+                <button class="btn btn-ghost btn-sm class-year-filter active" data-year="">All</button>
+                <button class="btn btn-ghost btn-sm class-year-filter" data-year="1">1AC</button>
+                <button class="btn btn-ghost btn-sm class-year-filter" data-year="2">2AC</button>
+                <button class="btn btn-ghost btn-sm class-year-filter" data-year="3">3AC</button>
+              </div>
+            </div>
+            <div class="class-selector" id="classSelectorGrid"></div>
+          </div>
+        </div>
+
+        <!-- Step 4: Generate -->
+        <div class="generate-bar">
+          <div class="form-group">
+            <label>Start Date (first lesson)</label>
+            <input type="date" id="genDate" class="form-input">
+          </div>
+          <div class="form-group">
+            <label>Start Time</label>
+            <input type="time" id="genTime" value="08:30" class="form-input">
+          </div>
+          <div class="form-group">
+            <label>Period</label>
+            <select id="genPeriod" class="form-input">
+              <option value="">—</option>
+              <option value="1">Period 1</option>
+              <option value="2">Period 2</option>
+              <option value="3">Period 3</option>
+              <option value="4">Period 4</option>
+              <option value="5">Period 5</option>
+              <option value="6">Period 6</option>
+              <option value="7">Period 7</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Completion Status</label>
+            <select id="genStatus" class="form-input">
+              <option value="completed">✅ Completed</option>
+              <option value="partial">🟡 Partial</option>
+              <option value="not_started">🔴 Not Started</option>
+              <option value="skipped">⏭ Skipped</option>
+            </select>
+          </div>
+          <div style="display:flex;gap:8px;align-items:flex-end;padding-bottom:2px">
+            <button class="btn btn-primary" id="btnGenerate" style="white-space:nowrap">
+              ⚡ Generate Lesson Logs
+            </button>
+            <button class="btn btn-secondary" id="btnPreviewGenerate" style="white-space:nowrap">Preview</button>
+          </div>
+        </div>
+
+        <!-- Preview area -->
+        <div id="generatePreview" style="display:none;margin-top:16px"></div>
+      </div>
+    </div>
+
+    <!-- ===== TAB 2: WEEKLY QUICK LOG ===== -->
+    <div class="hub-panel" id="panel-weekly">
+      <div class="info-box">
+        <span class="info-icon">📅</span>
+        <div><strong>Weekly view:</strong> See all your classes for the selected week. Click a lesson slot to quickly log topic, time, and status. Perfect for filling in your logbook at the end of each day.</div>
+      </div>
+
+      <div class="week-nav">
+        <button class="btn btn-secondary btn-sm" id="btnPrevWeek">← Prev</button>
+        <div class="week-nav__label" id="weekLabel"></div>
+        <button class="btn btn-secondary btn-sm" id="btnNextWeek">Next →</button>
+        <button class="btn btn-ghost btn-sm" id="btnThisWeek">Today</button>
+        <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+          <label style="font-size:13px;font-weight:600">Filter:</label>
+          <select id="weekClassFilter" style="font-size:13px;padding:4px 8px;border:1px solid var(--border);border-radius:6px">
+            <option value="">All Classes</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="week-grid" id="weekGrid"></div>
+    </div>
+
+    <!-- ===== TAB 3: CLASS OVERVIEW ===== -->
+    <div class="hub-panel" id="panel-overview">
+      <div class="info-box">
+        <span class="info-icon">📊</span>
+        <div><strong>Class overview:</strong> See at a glance how many lessons each class has had, the last lesson taught, and which topics have been covered. Filter by year level or class.</div>
+      </div>
+
+      <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center">
+        <select id="overviewYearFilter" style="padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px">
+          <option value="">All Year Levels</option>
+          <option value="1">1AC</option>
+          <option value="2">2AC</option>
+          <option value="3">3AC</option>
+        </select>
+        <input type="text" id="overviewSearch" placeholder="Search class or topic..." style="padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;flex:1;min-width:180px">
+        <button class="btn btn-secondary btn-sm" id="btnRefreshOverview">↺ Refresh</button>
+      </div>
+
+      <div id="overviewContainer"></div>
+    </div>
+
+  </main>
+
+  <!-- Bottom Navigation (Mobile) -->
+  <nav class="bottom-nav" id="bottomNav">
+    <a href="index.html" class="bottom-nav__item" data-nav="index.html">
+      <svg class="bottom-nav__icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span class="bottom-nav__label">Home</span>
+    </a>
+    <a href="teaching-hub.html" class="bottom-nav__item bottom-nav__item--active" data-nav="teaching-hub.html">
+      <svg class="bottom-nav__icon" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      <span class="bottom-nav__label">Hub</span>
+    </a>
+    <a href="lessons.html" class="bottom-nav__item" data-nav="lessons.html">
+      <svg class="bottom-nav__icon" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+      <span class="bottom-nav__label">Lessons</span>
+    </a>
+    <a href="assessments.html" class="bottom-nav__item" data-nav="assessments.html">
+      <svg class="bottom-nav__icon" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      <span class="bottom-nav__label">Grades</span>
+    </a>
+    <button class="bottom-nav__item bottom-nav__more" id="bottomNavMore">
+      <svg class="bottom-nav__icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+      <span class="bottom-nav__label">More</span>
+    </button>
+  </nav>
+
+  <script src="js/storage.js"></script>
+  <script src="js/data-models.js"></script>
+  <script src="js/ui-helpers.js"></script>
+  <script src="js/ai-service.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/sidepanel.js"></script>
+  <script src="js/command-palette.js"></script>
+  <script src="js/teaching-hub.js"></script>
+</body>
+</html>

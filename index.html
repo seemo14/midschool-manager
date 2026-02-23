@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
   <meta charset="UTF-8">
@@ -93,6 +93,7 @@
         <span class="sidebar__icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
         <span class="sidebar__label">Dashboard</span>
       </a>
+      <a href="teaching-hub.html" class="sidebar__link" data-nav="teaching-hub.html"><span class="sidebar__icon"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></span><span class="sidebar__label">Teaching Hub</span></a>
       <a href="lessons.html" class="sidebar__link" data-nav="lessons.html">
         <span class="sidebar__icon"><svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span>
         <span class="sidebar__label">Lesson Records</span>
@@ -144,12 +145,16 @@
     </button>
     <div class="header__inner">
       <h1 class="header__title" data-header-title>Dashboard</h1>
-      <div class="header__info" data-header-info></div>
+      <div class="header__actions">
+        <button class="header__search-btn" id="headerSearchBtn" aria-label="Search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
+        <div class="header__info" data-header-info></div>
+      </div>
     </div>
   </header>
 
   <!-- Main Content -->
   <main class="main-content">
+    <nav class="breadcrumbs" id="breadcrumbs" aria-label="Breadcrumbs"></nav>
     <!-- Welcome Banner with Stats -->
     <div class="welcome-banner" id="welcomeBanner">
       <h1 id="welcomeName">Welcome!</h1>
@@ -157,8 +162,28 @@
       <div class="motivation-stats" id="motivationStats"></div>
     </div>
 
+    <!-- Action Grid (Quick Actions) -->
+    <div class="action-grid" id="actionGrid">
+      <a href="lessons.html?action=new" class="action-card action-card--primary">
+        <span class="action-card__icon">📖</span>
+        <span class="action-card__label">Log Lesson</span>
+      </a>
+      <a href="assessments.html?action=grade" class="action-card">
+        <span class="action-card__icon">📝</span>
+        <span class="action-card__label">Add Grades</span>
+      </a>
+      <a href="students.html?action=attendance" class="action-card">
+        <span class="action-card__icon">✅</span>
+        <span class="action-card__label">Attendance</span>
+      </a>
+      <a href="plans.html?action=new" class="action-card">
+        <span class="action-card__icon">✏️</span>
+        <span class="action-card__label">New Plan</span>
+      </a>
+    </div>
+
     <!-- Stats Grid -->
-    <div class="stats-grid" id="statsGrid">
+    <div class="stats-grid stats-grid--scroll" id="statsGrid">
       <div class="stat-card" onclick="location.href='students.html'">
         <div class="stat-card__icon" style="background: var(--primary-light); color: var(--primary);">👥</div>
         <div>
@@ -225,14 +250,14 @@
           </div>
         </div>
 
-        <!-- Quick Actions -->
-        <div class="card">
+        <!-- Quick Actions (desktop only, replaces action-grid cards on large screens) -->
+        <div class="card desktop-quick-actions">
           <h3 class="card__title">Quick Actions</h3>
           <div class="quick-actions">
-            <a href="lessons.html" class="btn btn-primary">+ Log Lesson</a>
-            <a href="assessments.html" class="btn btn-secondary">+ Add Assessment</a>
+            <a href="lessons.html?action=new" class="btn btn-primary">+ Log Lesson</a>
+            <a href="assessments.html?action=grade" class="btn btn-secondary">+ Add Assessment</a>
             <a href="students.html" class="btn btn-secondary">+ Upload Students</a>
-            <a href="plans.html" class="btn btn-secondary">+ New Plan</a>
+            <a href="plans.html?action=new" class="btn btn-secondary">+ New Plan</a>
           </div>
         </div>
       </div>
@@ -269,12 +294,43 @@
       </div>
       <div id="remedialAlerts"></div>
     </div>
+
+    <!-- Floating Action Button (Mobile) -->
+    <button class="fab" id="fabButton" aria-label="Quick actions">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    </button>
   </main>
+
+  <!-- Bottom Navigation (Mobile) -->
+  <nav class="bottom-nav" id="bottomNav">
+    <a href="index.html" class="bottom-nav__item" data-nav="index.html">
+      <svg class="bottom-nav__icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span class="bottom-nav__label">Home</span>
+    </a>
+    <a href="teaching-hub.html" class="bottom-nav__item" data-nav="teaching-hub.html">
+      <svg class="bottom-nav__icon" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      <span class="bottom-nav__label">Hub</span>
+    </a>
+    <a href="assessments.html" class="bottom-nav__item" data-nav="assessments.html">
+      <svg class="bottom-nav__icon" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      <span class="bottom-nav__label">Grades</span>
+    </a>
+    <a href="students.html" class="bottom-nav__item" data-nav="students.html">
+      <svg class="bottom-nav__icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+      <span class="bottom-nav__label">Students</span>
+    </a>
+    <button class="bottom-nav__item bottom-nav__more" id="bottomNavMore">
+      <svg class="bottom-nav__icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+      <span class="bottom-nav__label">More</span>
+    </button>
+  </nav>
 
   <script src="js/storage.js"></script>
   <script src="js/data-models.js"></script>
   <script src="js/ui-helpers.js"></script>
   <script src="js/app.js"></script>
+  <script src="js/sidepanel.js"></script>
+  <script src="js/command-palette.js"></script>
   <script src="js/curriculum.js"></script>
   <script src="js/attendance.js"></script>
   <script src="js/reports.js"></script>

@@ -146,6 +146,7 @@
           (m.description ? '<p class="text-sm" style="margin:0;color:var(--text-secondary)">' + UI.escapeHTML(m.description) + '</p>' : '') +
           tags +
           '<div class="material-card__actions">' +
+          '<button class="btn btn-ghost btn-sm" onclick="MSM.MaterialsPage.view(\'' + m.id + '\')">View</button>' +
           '<button class="btn btn-ghost btn-sm" onclick="MSM.MaterialsPage.edit(\'' + m.id + '\')">Edit</button>' +
           '<button class="btn btn-ghost btn-sm" onclick="MSM.MaterialsPage.toggle(\'' + m.id + '\')">' + (m.isAvailable ? 'Mark Missing' : 'Mark Available') + '</button>' +
           '<button class="btn btn-ghost btn-sm" style="color:var(--danger)" onclick="MSM.MaterialsPage.del(\'' + m.id + '\')">Delete</button></div></div>';
@@ -174,6 +175,37 @@
     });
 
     window.MSM.MaterialsPage = {
+      view: function (id) {
+        var mat = S.getById(KEYS.MATERIALS, id);
+        if (!mat) return;
+        var typeIcons = { textbook: '📕', worksheet: '📄', digital: '💻', audio: '🎧', video: '🎬', flashcards: '🃏', other: '📦' };
+        var icon = typeIcons[mat.type] || '📦';
+        var yearLabel = mat.yearLevel > 0 ? ['', '1AC', '2AC', '3AC'][mat.yearLevel] : 'All Levels';
+        var html = '<div style="margin-bottom:16px">' +
+          '<span style="font-size:32px">' + icon + '</span>' +
+          '<span class="badge ' + (mat.isAvailable ? 'badge-success' : 'badge-danger') + '" style="margin-left:8px">' + (mat.isAvailable ? 'Available' : 'Missing') + '</span></div>';
+        html += '<div style="margin-bottom:8px"><strong>Type:</strong> ' + UI.escapeHTML(mat.type || '-') + '</div>';
+        html += '<div style="margin-bottom:8px"><strong>Year Level:</strong> ' + UI.escapeHTML(yearLabel) + '</div>';
+        if (mat.unit) html += '<div style="margin-bottom:8px"><strong>Unit:</strong> ' + UI.escapeHTML(mat.unit) + '</div>';
+        if (mat.lesson) html += '<div style="margin-bottom:8px"><strong>Lesson:</strong> ' + UI.escapeHTML(mat.lesson) + '</div>';
+        if (mat.description) html += '<div style="margin-bottom:12px"><strong>Description:</strong><p style="margin:4px 0;color:var(--text-secondary)">' + UI.escapeHTML(mat.description) + '</p></div>';
+        if (mat.source) html += '<div style="margin-bottom:8px"><strong>Source:</strong> ' + UI.escapeHTML(mat.source) + '</div>';
+        if (mat.fileReference) html += '<div style="margin-bottom:8px"><strong>File/URL:</strong> ' + UI.escapeHTML(mat.fileReference) + '</div>';
+        if (mat.tags && mat.tags.length) html += '<div style="margin-bottom:12px"><strong>Tags:</strong> ' + mat.tags.map(function (t) { return '<span class="badge" style="margin:2px">' + UI.escapeHTML(t) + '</span>'; }).join(' ') + '</div>';
+        if (mat.notes) html += '<div style="margin-bottom:12px"><strong>Notes:</strong><p style="margin:4px 0;color:var(--text-secondary)">' + UI.escapeHTML(mat.notes) + '</p></div>';
+
+        if (MSM.Sidepanel) {
+          MSM.Sidepanel.open({
+            title: mat.title || 'Material',
+            content: html,
+            actions: [
+              { label: 'Edit', className: 'btn-primary', onClick: function () { MSM.Sidepanel.close(); MSM.MaterialsPage.edit(id); } },
+              { label: mat.isAvailable ? 'Mark Missing' : 'Mark Available', className: 'btn-secondary', onClick: function () { MSM.Sidepanel.close(); MSM.MaterialsPage.toggle(id); } },
+              { label: 'Delete', className: 'btn-secondary', onClick: function () { MSM.Sidepanel.close(); MSM.MaterialsPage.del(id); } }
+            ]
+          });
+        }
+      },
       edit: function (id) {
         var mat = S.getById(KEYS.MATERIALS, id);
         if (!mat) return;

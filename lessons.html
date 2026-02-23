@@ -8,6 +8,61 @@
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icons/icon-192.svg">
   <link rel="stylesheet" href="css/main.css">
+  <style>
+    /* ===== Quick-add bar ===== */
+    .quick-add-bar {
+      display:grid;
+      grid-template-columns: 130px 110px 70px 70px 1fr 100px auto;
+      gap:6px;
+      align-items:center;
+      background:var(--primary-50);
+      border:1px solid var(--primary-100);
+      border-radius:var(--radius-lg);
+      padding:10px 14px;
+      margin-bottom:16px;
+      flex-wrap:wrap;
+    }
+    .quick-add-bar input, .quick-add-bar select {
+      padding:5px 8px;
+      border:1px solid var(--border);
+      border-radius:6px;
+      font-size:13px;
+      background:var(--card);
+      width:100%;
+    }
+    .quick-add-bar label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--primary); margin-bottom:2px; display:block; }
+    @media(max-width:900px){ .quick-add-bar { grid-template-columns:1fr 1fr; } }
+    @media(max-width:540px){ .quick-add-bar { grid-template-columns:1fr; } }
+
+    /* ===== Lesson table enhancements ===== */
+    .lessons-view-tabs { display:flex; gap:4px; margin-bottom:16px; }
+    .lessons-view-tab { padding:7px 16px; font-size:13px; font-weight:600; color:var(--text-secondary); cursor:pointer; border:1px solid var(--border); background:var(--card); border-radius:var(--radius-md); transition:all .15s; }
+    .lessons-view-tab.active { background:var(--primary); color:#fff; border-color:var(--primary); }
+
+    /* class-grouped view */
+    .class-group { margin-bottom:24px; }
+    .class-group__header { display:flex; align-items:center; gap:10px; padding:10px 14px; border-radius:var(--radius-md); margin-bottom:8px; cursor:pointer; }
+    .class-group__name { font-weight:700; font-size:15px; }
+    .class-group__count { font-size:12px; color:var(--text-secondary); margin-left:auto; }
+    .class-group__body { border:1px solid var(--border); border-radius:var(--radius-md); overflow:hidden; }
+
+    /* Inline editable table */
+    .lessons-tbl { width:100%; border-collapse:collapse; font-size:13px; }
+    .lessons-tbl th { background:var(--bg-secondary); padding:9px 12px; text-align:left; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--text-secondary); border-bottom:2px solid var(--border); white-space:nowrap; }
+    .lessons-tbl td { padding:7px 10px; border-bottom:1px solid var(--border-light); vertical-align:middle; }
+    .lessons-tbl tr:last-child td { border-bottom:none; }
+    .lessons-tbl tr:hover td { background:var(--bg-secondary); }
+    .lessons-tbl .time-col { font-family:monospace; font-size:12px; color:var(--text-secondary); }
+
+    /* Bulk select */
+    .bulk-toolbar { display:none; background:var(--primary); color:#fff; border-radius:var(--radius-md); padding:10px 16px; margin-bottom:12px; align-items:center; gap:12px; flex-wrap:wrap; }
+    .bulk-toolbar.visible { display:flex; }
+    .bulk-toolbar span { font-weight:600; font-size:14px; }
+    .bulk-toolbar .btn { background:rgba(255,255,255,.15); color:#fff; border-color:rgba(255,255,255,.3); }
+    .bulk-toolbar .btn:hover { background:rgba(255,255,255,.25); }
+    .bulk-toolbar .btn-danger { background:rgba(220,38,38,.8); border-color:rgba(220,38,38,.9); }
+    .row-check { width:16px; height:16px; cursor:pointer; }
+  </style>
 </head>
 <body>
   <nav class="sidebar" id="sidebar">
@@ -15,10 +70,11 @@
     <div class="sidebar__nav">
       <div class="sidebar__section-label">Main</div>
       <a href="index.html" class="sidebar__link" data-nav="index.html"><span class="sidebar__icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span><span class="sidebar__label">Dashboard</span></a>
+      <a href="teaching-hub.html" class="sidebar__link" data-nav="teaching-hub.html"><span class="sidebar__icon"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></span><span class="sidebar__label">Teaching Hub</span></a>
       <a href="lessons.html" class="sidebar__link sidebar__link--active" data-nav="lessons.html"><span class="sidebar__icon"><svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><span class="sidebar__label">Lesson Records</span></a>
-      <a href="materials.html" class="sidebar__link" data-nav="materials.html"><span class="sidebar__icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span><span class="sidebar__label">Materials</span></a>
       <a href="plans.html" class="sidebar__link" data-nav="plans.html"><span class="sidebar__icon"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></span><span class="sidebar__label">Lesson Plans</span></a>
       <a href="calendar.html" class="sidebar__link" data-nav="calendar.html"><span class="sidebar__icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span><span class="sidebar__label">Calendar</span></a>
+      <a href="materials.html" class="sidebar__link" data-nav="materials.html"><span class="sidebar__icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span><span class="sidebar__label">Materials</span></a>
       <div class="sidebar__section-label">Students</div>
       <a href="students.html" class="sidebar__link" data-nav="students.html"><span class="sidebar__icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span class="sidebar__label">Students</span></a>
       <a href="assessments.html" class="sidebar__link" data-nav="assessments.html"><span class="sidebar__icon"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span><span class="sidebar__label">Assessments</span></a>
@@ -28,35 +84,142 @@
     <div class="sidebar__footer"><a href="settings.html" class="sidebar__link" data-nav="settings.html"><span class="sidebar__icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span class="sidebar__label">Settings</span></a></div>
   </nav>
   <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
   <header class="header">
     <button class="hamburger" id="hamburgerBtn" aria-label="Toggle navigation"><span class="hamburger__line"></span><span class="hamburger__line"></span><span class="hamburger__line"></span></button>
-    <div class="header__inner"><h1 class="header__title" data-header-title>Lesson Records</h1><div class="header__info" data-header-info></div></div>
+    <div class="header__inner">
+      <h1 class="header__title" data-header-title>Lesson Records</h1>
+      <div class="header__actions">
+        <button class="header__search-btn" id="headerSearchBtn" aria-label="Search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
+        <div class="header__info" data-header-info></div>
+      </div>
+    </div>
   </header>
 
   <main class="main-content">
+    <nav class="breadcrumbs" id="breadcrumbs" aria-label="Breadcrumbs"></nav>
+
     <div class="page-header">
       <h2>Lesson Records</h2>
       <div class="page-header__actions">
-        <button class="btn btn-primary" id="btnNewLesson">+ New Lesson Record</button>
+        <a href="teaching-hub.html" class="btn btn-secondary" title="Bulk log from pasted plan">⚡ Bulk Generate</a>
+        <button class="btn btn-primary" id="btnNewLesson">+ New Record</button>
       </div>
     </div>
 
-    <div class="filter-bar">
-      <div class="form-group"><label for="filterClass">Class</label><select id="filterClass"></select></div>
-      <div class="form-group"><label for="filterStatus">Status</label>
-        <select id="filterStatus"><option value="">All</option><option value="completed">Completed</option><option value="partial">Partial</option><option value="not_started">Not Started</option><option value="skipped">Skipped</option></select>
+    <!-- Quick-add bar -->
+    <div class="quick-add-bar" id="quickAddBar">
+      <div>
+        <label>Class</label>
+        <select id="qaClass"></select>
       </div>
-      <div class="form-group"><label for="filterSearch">Search</label><input type="text" id="filterSearch" placeholder="Search topics..."></div>
+      <div>
+        <label>Date</label>
+        <input type="date" id="qaDate">
+      </div>
+      <div>
+        <label>Time</label>
+        <input type="time" id="qaTime" value="">
+      </div>
+      <div>
+        <label>Period</label>
+        <select id="qaPeriod">
+          <option value="">—</option>
+          <option value="1">P1</option><option value="2">P2</option><option value="3">P3</option>
+          <option value="4">P4</option><option value="5">P5</option><option value="6">P6</option><option value="7">P7</option>
+        </select>
+      </div>
+      <div>
+        <label>Topic <span style="color:var(--danger)">*</span></label>
+        <input type="text" id="qaTopic" placeholder="e.g. Present Simple - Negatives" style="width:100%">
+      </div>
+      <div>
+        <label>Status</label>
+        <select id="qaStatus">
+          <option value="completed">✅ Done</option>
+          <option value="partial">🟡 Partial</option>
+          <option value="not_started">🔴 Not Started</option>
+          <option value="skipped">⏭ Skipped</option>
+        </select>
+      </div>
+      <div>
+        <label>&nbsp;</label>
+        <button class="btn btn-primary btn-sm" id="btnQuickSave" style="white-space:nowrap;padding:7px 14px">+ Add</button>
+      </div>
+    </div>
+
+    <!-- Filters + view toggle -->
+    <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;margin-bottom:16px">
+      <div class="filter-bar" style="margin-bottom:0;flex:1;flex-wrap:wrap">
+        <div class="form-group"><label for="filterClass">Class</label><select id="filterClass"></select></div>
+        <div class="form-group"><label for="filterStatus">Status</label>
+          <select id="filterStatus">
+            <option value="">All</option>
+            <option value="completed">Completed</option>
+            <option value="partial">Partial</option>
+            <option value="not_started">Not Started</option>
+            <option value="skipped">Skipped</option>
+          </select>
+        </div>
+        <div class="form-group" style="flex:1;min-width:150px"><label for="filterSearch">Search</label><input type="text" id="filterSearch" placeholder="Search topics..."></div>
+        <div class="form-group"><label for="filterDateFrom">From</label><input type="date" id="filterDateFrom"></div>
+        <div class="form-group"><label for="filterDateTo">To</label><input type="date" id="filterDateTo"></div>
+      </div>
+      <div class="lessons-view-tabs" style="margin-bottom:0;flex-shrink:0">
+        <button class="lessons-view-tab active" data-view="table">List</button>
+        <button class="lessons-view-tab" data-view="grouped">By Class</button>
+      </div>
+    </div>
+
+    <!-- Bulk toolbar -->
+    <div class="bulk-toolbar" id="bulkToolbar">
+      <span id="bulkCount">0 selected</span>
+      <select id="bulkStatusSel" style="padding:5px 8px;border-radius:6px;font-size:13px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.15);color:#fff">
+        <option value="">Change status to…</option>
+        <option value="completed">✅ Completed</option>
+        <option value="partial">🟡 Partial</option>
+        <option value="not_started">🔴 Not Started</option>
+        <option value="skipped">⏭ Skipped</option>
+      </select>
+      <button class="btn" id="btnBulkStatus">Apply Status</button>
+      <button class="btn btn-danger" id="btnBulkDelete">🗑 Delete Selected</button>
+      <button class="btn" id="btnBulkClear" style="margin-left:auto">✕ Clear</button>
     </div>
 
     <div id="lessonsTable"></div>
   </main>
+
+  <!-- Bottom Navigation (Mobile) -->
+  <nav class="bottom-nav" id="bottomNav">
+    <a href="index.html" class="bottom-nav__item" data-nav="index.html">
+      <svg class="bottom-nav__icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span class="bottom-nav__label">Home</span>
+    </a>
+    <a href="teaching-hub.html" class="bottom-nav__item" data-nav="teaching-hub.html">
+      <svg class="bottom-nav__icon" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      <span class="bottom-nav__label">Hub</span>
+    </a>
+    <a href="lessons.html" class="bottom-nav__item bottom-nav__item--active" data-nav="lessons.html">
+      <svg class="bottom-nav__icon" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+      <span class="bottom-nav__label">Lessons</span>
+    </a>
+    <a href="assessments.html" class="bottom-nav__item" data-nav="assessments.html">
+      <svg class="bottom-nav__icon" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      <span class="bottom-nav__label">Grades</span>
+    </a>
+    <button class="bottom-nav__item bottom-nav__more" id="bottomNavMore">
+      <svg class="bottom-nav__icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+      <span class="bottom-nav__label">More</span>
+    </button>
+  </nav>
 
   <script src="js/storage.js"></script>
   <script src="js/data-models.js"></script>
   <script src="js/ui-helpers.js"></script>
   <script src="js/ai-service.js"></script>
   <script src="js/app.js"></script>
+  <script src="js/sidepanel.js"></script>
+  <script src="js/command-palette.js"></script>
   <script src="js/lessons.js"></script>
 </body>
 </html>

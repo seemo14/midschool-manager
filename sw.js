@@ -1,4 +1,4 @@
-var CACHE_NAME = 'msm-cache-v2';
+var CACHE_NAME = 'msm-cache-v3';
 
 // Use relative paths so it works on any subdirectory (e.g. GitHub Pages /repo-name/)
 var CORE_ASSETS = [
@@ -32,6 +32,8 @@ var CORE_ASSETS = [
   './js/settings.js',
   './js/attendance.js',
   './js/reports.js',
+  './js/sidepanel.js',
+  './js/command-palette.js',
   './manifest.json',
   './icons/icon-192.svg',
   './icons/icon-512.svg'

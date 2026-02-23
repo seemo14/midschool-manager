@@ -249,6 +249,16 @@
     }
 
     // ======================================================================
+    //  FAB (mobile) - opens command palette
+    // ======================================================================
+    var fabBtn = document.getElementById('fabButton');
+    if (fabBtn && window.MSM.CommandPalette) {
+      fabBtn.addEventListener('click', function () {
+        MSM.CommandPalette.open();
+      });
+    }
+
+    // ======================================================================
     //  Remedial Alerts
     // ======================================================================
     var alertsCard = document.getElementById('remedialAlertsCard');

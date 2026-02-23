@@ -225,6 +225,15 @@
     document.getElementById('btnToday').addEventListener('click', function () { currentDate = new Date(); render(); });
     document.getElementById('btnAddEvent').addEventListener('click', function () { showAddEventModal(); });
 
+    // Handle ?action=new from command palette
+    var urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('action') === 'new') {
+      if (window.history && window.history.replaceState) {
+        window.history.replaceState({}, '', window.location.pathname);
+      }
+      setTimeout(function () { document.getElementById('btnAddEvent').click(); }, 300);
+    }
+
     // View toggle
     document.querySelectorAll('.view-tab').forEach(function (tab) {
       tab.addEventListener('click', function () {
