@@ -545,6 +545,28 @@
         if (lesson.homework) html += '<div style="margin-bottom:12px"><strong>Homework:</strong><p style="margin:4px 0;color:var(--text-secondary)">' + UI.escapeHTML(lesson.homework) + '</p></div>';
         if (lesson.notes) html += '<div style="margin-bottom:12px"><strong>Notes:</strong><p style="margin:4px 0;color:var(--text-secondary)">' + UI.escapeHTML(lesson.notes) + '</p></div>';
 
+        // ── Attached lesson files ──
+        var attachedFiles = S.query(KEYS.LESSON_FILES, function (f) { return f.lessonId === id; });
+        var typeIcons = { presentation: '📊', worksheet: '📝', activity: '🎯', other: '📄' };
+        if (attachedFiles.length) {
+          html += '<div class="lf-attached"><div class="lf-attached__label">Attached Files</div><div class="lf-attached__list">';
+          attachedFiles.forEach(function (f) {
+            html += '<div class="lf-attached__item">'
+              + '<span>' + (typeIcons[f.type] || '📄') + '</span>'
+              + '<span class="lf-attached__item-title">' + UI.escapeHTML(f.title || f.name) + '</span>'
+              + '<div class="lf-attached__item-actions">'
+              + '<button class="btn btn-sm btn-primary" onclick="MSM.LessonsPage.presentFile(\'' + f.id + '\')">⛶ Present</button>'
+              + '<button class="btn btn-sm btn-secondary" onclick="MSM.LessonsPage.previewFile(\'' + f.id + '\')">👁 Preview</button>'
+              + '<button class="btn btn-sm btn-secondary" onclick="MSM.LessonsPage.printFile(\'' + f.id + '\')">🖨 Print</button>'
+              + '</div></div>';
+          });
+          html += '</div></div>';
+        }
+        // Link to files page to attach more
+        html += '<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border-light)">'
+          + '<a href="files.html" class="btn btn-sm btn-secondary" style="font-size:12px">📂 Manage Files &rarr;</a>'
+          + '</div>';
+
         if (MSM.Sidepanel) {
           MSM.Sidepanel.open({
             title: lesson.topic || lesson.unit || 'Lesson Record',
