@@ -308,29 +308,40 @@
         /* ----- highlightActiveNav ------------------------------------ */
 
         /**
-         * Adds 'active' class to the sidebar link that matches the current page.
+         * Highlights the topnav and mobile-menu links matching the current page.
          */
         highlightActiveNav: function () {
             var filename = getCurrentPageFilename();
-            var navLinks = document.querySelectorAll('.msm-sidebar a, .msm-sidebar .nav-link, [data-nav]');
 
-            for (var i = 0; i < navLinks.length; i++) {
-                var link = navLinks[i];
-                var href = link.getAttribute('href') || '';
-                var linkFilename = href.substring(href.lastIndexOf('/') + 1);
-
-                // Remove any existing active class
-                link.classList.remove('active');
-                if (link.parentElement) {
-                    link.parentElement.classList.remove('active');
+            // Top nav links
+            var topnavLinks = document.querySelectorAll('.topnav__link[data-nav]');
+            for (var i = 0; i < topnavLinks.length; i++) {
+                var link = topnavLinks[i];
+                var nav = link.getAttribute('data-nav') || '';
+                link.classList.remove('topnav__link--active');
+                if (nav === filename) {
+                    link.classList.add('topnav__link--active');
                 }
+            }
 
-                // Match current page
-                if (linkFilename === filename) {
-                    link.classList.add('active');
-                    if (link.parentElement) {
-                        link.parentElement.classList.add('active');
-                    }
+            // Settings action button
+            var settingsBtn = document.querySelector('.topnav__action-btn[data-nav="settings.html"]');
+            if (settingsBtn) {
+                if (filename === 'settings.html') {
+                    settingsBtn.classList.add('topnav__action-btn--active');
+                } else {
+                    settingsBtn.classList.remove('topnav__action-btn--active');
+                }
+            }
+
+            // Mobile menu links
+            var mobileLinks = document.querySelectorAll('.mobile-menu__link[data-nav]');
+            for (var j = 0; j < mobileLinks.length; j++) {
+                var mLink = mobileLinks[j];
+                var mNav = mLink.getAttribute('data-nav') || '';
+                mLink.classList.remove('mobile-menu__link--active');
+                if (mNav === filename) {
+                    mLink.classList.add('mobile-menu__link--active');
                 }
             }
         },
@@ -338,34 +349,48 @@
         /* ----- setupHamburger ---------------------------------------- */
 
         /**
-         * Mobile hamburger menu: toggles sidebar visibility.
+         * Mobile hamburger: toggles the top-nav dropdown menu.
          */
         setupHamburger: function () {
-            var hamburger = document.querySelector('.msm-hamburger, .hamburger-btn, [data-hamburger]');
-            var backdrop = document.querySelector('.msm-sidebar-backdrop, .sidebar-backdrop');
+            var hamburger = document.getElementById('hamburgerBtn');
+            var mobileMenu = document.getElementById('mobileMenu');
+            var backdrop = document.getElementById('mobileMenuBackdrop');
+
+            function openMenu() {
+                document.body.classList.add('topnav-open');
+                if (mobileMenu) {
+                    mobileMenu.classList.add('mobile-menu--open');
+                    mobileMenu.setAttribute('aria-hidden', 'false');
+                }
+                if (backdrop) { backdrop.classList.add('mobile-menu-backdrop--visible'); }
+                if (hamburger) { hamburger.setAttribute('aria-expanded', 'true'); }
+            }
+
+            function closeMenu() {
+                document.body.classList.remove('topnav-open');
+                if (mobileMenu) {
+                    mobileMenu.classList.remove('mobile-menu--open');
+                    mobileMenu.setAttribute('aria-hidden', 'true');
+                }
+                if (backdrop) { backdrop.classList.remove('mobile-menu-backdrop--visible'); }
+                if (hamburger) { hamburger.setAttribute('aria-expanded', 'false'); }
+            }
 
             if (hamburger) {
                 hamburger.addEventListener('click', function () {
-                    document.body.classList.toggle('sidebar-open');
+                    var isOpen = document.body.classList.contains('topnav-open');
+                    if (isOpen) { closeMenu(); } else { openMenu(); }
                 });
             }
 
             if (backdrop) {
-                backdrop.addEventListener('click', function () {
-                    document.body.classList.remove('sidebar-open');
-                });
+                backdrop.addEventListener('click', closeMenu);
             }
 
-            // Also close sidebar when clicking outside on mobile
-            document.addEventListener('click', function (e) {
-                if (!document.body.classList.contains('sidebar-open')) { return; }
-
-                var sidebar = document.querySelector('.msm-sidebar, .sidebar');
-                var isInsideSidebar = sidebar && sidebar.contains(e.target);
-                var isHamburger = hamburger && hamburger.contains(e.target);
-
-                if (!isInsideSidebar && !isHamburger) {
-                    document.body.classList.remove('sidebar-open');
+            // Close menu on Escape key (handled in setupKeyboardShortcuts too)
+            document.addEventListener('keydown', function (e) {
+                if ((e.key === 'Escape' || e.keyCode === 27) && document.body.classList.contains('topnav-open')) {
+                    closeMenu();
                 }
             });
         },
@@ -404,7 +429,14 @@
                             last.parentNode.removeChild(last);
                         }
                     }
-                    document.body.classList.remove('sidebar-open');
+                    // Close mobile menu if open
+                    document.body.classList.remove('topnav-open');
+                    var mMenu = document.getElementById('mobileMenu');
+                    if (mMenu) { mMenu.classList.remove('mobile-menu--open'); mMenu.setAttribute('aria-hidden', 'true'); }
+                    var mBackdrop = document.getElementById('mobileMenuBackdrop');
+                    if (mBackdrop) { mBackdrop.classList.remove('mobile-menu-backdrop--visible'); }
+                    var hBtn = document.getElementById('hamburgerBtn');
+                    if (hBtn) { hBtn.setAttribute('aria-expanded', 'false'); }
                 }
             });
         },
@@ -412,32 +444,16 @@
         /* ----- setupSidebarCollapse ---------------------------------- */
 
         /**
-         * Sidebar collapse/expand behavior for tablet viewports.
-         * Saves preference in localStorage.
+         * No-op: sidebar has been replaced by the top navigation bar.
          */
         setupSidebarCollapse: function () {
-            var collapseBtn = document.querySelector(
-                '.msm-sidebar-collapse, .sidebar-collapse-btn, [data-sidebar-collapse]'
-            );
-
-            // Restore saved preference
-            var isCollapsed = localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === 'true';
-            if (isCollapsed) {
-                document.body.classList.add('sidebar-collapsed');
-            }
-
-            if (collapseBtn) {
-                collapseBtn.addEventListener('click', function () {
-                    var nowCollapsed = document.body.classList.toggle('sidebar-collapsed');
-                    localStorage.setItem(SIDEBAR_COLLAPSED_KEY, nowCollapsed ? 'true' : 'false');
-                });
-            }
+            // Sidebar removed – no-op retained for API compatibility.
         },
 
         /* ----- initDarkMode ------------------------------------------ */
 
         /**
-         * Initialize dark mode from saved preference and inject toggle into sidebar.
+         * Initialize dark mode from saved preference and inject toggle into topnav actions.
          */
         initDarkMode: function () {
             var isDark = localStorage.getItem(DARK_MODE_KEY) === 'true';
@@ -445,30 +461,31 @@
                 document.documentElement.setAttribute('data-theme', 'dark');
             }
 
-            // Inject toggle into sidebar footer (before settings link)
-            var sidebarFooter = document.querySelector('.sidebar__footer');
-            if (sidebarFooter) {
-                var toggle = document.createElement('div');
-                toggle.className = 'dark-mode-toggle';
-                toggle.innerHTML = '<span class="dark-mode-toggle__icon">' + (isDark ? '☀️' : '🌙') + '</span>' +
-                    '<span class="sidebar__label">' + (isDark ? 'Light Mode' : 'Dark Mode') + '</span>';
+            // Inject toggle button into .topnav__actions (before the search button)
+            var topnavActions = document.querySelector('.topnav__actions');
+            if (topnavActions) {
+                var toggle = document.createElement('button');
+                toggle.className = 'dark-mode-toggle topnav__action-btn';
+                toggle.setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
+                toggle.innerHTML = '<span class="dark-mode-toggle__icon">' + (isDark ? '☀️' : '🌙') + '</span>';
 
                 toggle.addEventListener('click', function () {
                     var currentlyDark = document.documentElement.getAttribute('data-theme') === 'dark';
                     if (currentlyDark) {
                         document.documentElement.removeAttribute('data-theme');
                         localStorage.setItem(DARK_MODE_KEY, 'false');
-                        toggle.innerHTML = '<span class="dark-mode-toggle__icon">🌙</span>' +
-                            '<span class="sidebar__label">Dark Mode</span>';
+                        toggle.innerHTML = '<span class="dark-mode-toggle__icon">🌙</span>';
+                        toggle.setAttribute('aria-label', 'Switch to dark mode');
                     } else {
                         document.documentElement.setAttribute('data-theme', 'dark');
                         localStorage.setItem(DARK_MODE_KEY, 'true');
-                        toggle.innerHTML = '<span class="dark-mode-toggle__icon">☀️</span>' +
-                            '<span class="sidebar__label">Light Mode</span>';
+                        toggle.innerHTML = '<span class="dark-mode-toggle__icon">☀️</span>';
+                        toggle.setAttribute('aria-label', 'Switch to light mode');
                     }
                 });
 
-                sidebarFooter.insertBefore(toggle, sidebarFooter.firstChild);
+                // Insert before the search button (first child of actions)
+                topnavActions.insertBefore(toggle, topnavActions.firstChild);
             }
         },
 
@@ -699,17 +716,9 @@
             var teacherName = settings.teacherName || '';
             var academicYear = settings.academicYear || App.getCurrentAcademicYear();
 
-            // Left side: app name / page title
-            var headerTitle = document.querySelector(
-                '.msm-header-title, .header-title, [data-header-title]'
-            );
-            if (headerTitle) {
-                headerTitle.textContent = App.getPageTitle();
-            }
-
-            // Right side: teacher name + academic year
+            // Teacher info pill in topnav (data-header-info attribute)
             var headerInfo = document.querySelector(
-                '.msm-header-info, .header-info, [data-header-info]'
+                '.topnav__teacher-info, [data-header-info]'
             );
             if (headerInfo) {
                 var parts = [];
