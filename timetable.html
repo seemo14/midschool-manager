@@ -135,69 +135,100 @@
     }
 
     /* ── Periods view ── */
-    .tt-periods { display: flex; flex-direction: column; gap: 10px; }
-    .tt-period-row {
-      display: flex;
-      align-items: flex-start;
-      gap: 16px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 14px 18px;
+    .tt-periods-wrap {
+      overflow-x: auto;
+      background: white;
+      border-radius: var(--radius-xl);
+      box-shadow: 0 4px 24px rgba(79,70,229,0.12);
+      border: 1px solid #E3E3F3;
     }
-    .tt-period-row__num {
-      min-width: 80px;
-      text-align: center;
-      font-size: 0.72rem;
+    .tt-periods-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 680px;
+      font-size: 0.81rem;
+    }
+    .tt-periods-table thead th {
+      background: #312E81;
+      color: white;
+      padding: 12px 10px;
+      font-size: 0.8rem;
       font-weight: 700;
+      text-align: center;
+      border-inline-start: 1px solid #3730A3;
+    }
+    .tt-periods-table thead th:first-child {
+      background: #1E1B4B;
+      font-size: 0.75rem;
+      min-width: 92px;
+    }
+    .tt-periods-table thead th:last-child { border-inline-start: none; }
+    .tt-periods-table tbody tr { transition: background 0.15s; }
+    .tt-periods-table tbody tr:hover { background: #F5F5FF; }
+    .tt-periods-table tbody td {
+      padding: 6px 8px;
+      text-align: center;
+      border: 1px solid #E3E3F3;
+      height: 72px;
+      vertical-align: middle;
+    }
+    .tt-pt-time {
+      background: #4338CA;
+      color: white;
+      font-weight: 700;
+      border: none !important;
+      padding: 8px 12px !important;
+    }
+    .tt-pt-pnum {
+      font-size: 0.67rem;
+      font-weight: 700;
+      opacity: 0.75;
+      letter-spacing: 0.05em;
       text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: var(--text-tertiary);
-      padding-top: 2px;
     }
-    .tt-period-row__time {
+    .tt-pt-tslot {
+      font-size: 0.85rem;
       font-weight: 800;
-      font-size: var(--text-base);
-      color: var(--primary);
-      min-width: 100px;
+      margin-top: 3px;
+      white-space: nowrap;
     }
-    .tt-period-row__classes {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      flex: 1;
-    }
-    .tt-period-chip {
+    .tt-pt-empty { color: #CBD5E1; font-size: 1.1rem; }
+    .tt-pt-chip {
       display: inline-flex;
       flex-direction: column;
       align-items: center;
-      gap: 2px;
-      padding: 5px 12px;
+      padding: 5px 10px;
       border-radius: 8px;
-      font-size: 0.78rem;
       font-weight: 700;
-      line-height: 1.3;
+      font-size: 0.78rem;
+      line-height: 1.4;
+      min-width: 62px;
+      gap: 2px;
     }
-    .tt-period-chip .day-tag {
-      font-size: 0.65rem;
-      font-weight: 600;
-      opacity: 0.7;
-    }
-    .tt-period-chip .room-tag {
+    .tt-pt-chip.y1 { background: #E0E7FF; color: #312E81; }
+    .tt-pt-chip.y2 { background: #D1FAE5; color: #065F46; }
+    .tt-pt-chip.y3 { background: #FEF3C7; color: #92400E; }
+    .tt-pt-room {
+      display: block;
       font-size: 0.64rem;
       font-weight: 600;
       opacity: 0.65;
     }
-    .tt-period-chip.y1 { background: #E0E7FF; color: #312E81; }
-    .tt-period-chip.y2 { background: #D1FAE5; color: #065F46; }
-    .tt-period-chip.y3 { background: #FEF3C7; color: #92400E; }
-    .tt-period-row--free .tt-period-row__time { color: var(--text-tertiary); }
-    .tt-period-free-label { font-size: var(--text-sm); color: var(--text-tertiary); font-style: italic; }
-
-    @media (max-width: 600px) {
-      .tt-period-row { flex-direction: column; gap: 10px; }
-      .tt-period-row__num { text-align: left; }
+    .tt-pt-legend {
+      display: flex;
+      gap: 18px;
+      justify-content: center;
+      flex-wrap: wrap;
+      padding: 13px 16px;
+      border-top: 1px solid #E3E3F3;
+      background: #FAFAFE;
+      border-radius: 0 0 var(--radius-xl) var(--radius-xl);
     }
+    .tt-pt-leg-item { display: flex; align-items: center; gap: 7px; font-size: 0.82rem; color: #4a5568; }
+    .tt-pt-leg-dot { width: 18px; height: 18px; border-radius: 5px; flex-shrink: 0; }
+    .tt-pt-leg-dot.y1 { background: #E0E7FF; border: 1px solid #C7D2FE; }
+    .tt-pt-leg-dot.y2 { background: #D1FAE5; border: 1px solid #A7F3D0; }
+    .tt-pt-leg-dot.y3 { background: #FEF3C7; border: 1px solid #FDE68A; }
 
     @media print {
       .topnav, .mobile-menu, .mobile-menu-backdrop, .page-header, .tt-toolbar, .breadcrumbs, .tt-tabs { display: none !important; }
@@ -390,95 +421,120 @@
     <div class="tt-viewer" id="ttViewerBox"></div>
   </div>
 
-  <!-- Periods view -->
-  <div id="ttPeriodsView" style="display:none">
-    <div class="tt-periods">
+  <!-- Periods view (RTL grid: Period column on right, Saturday on left) -->
+  <div id="ttPeriodsView" style="display:none" dir="rtl">
+    <div class="tt-periods-wrap">
+      <table class="tt-periods-table">
+        <thead>
+          <tr>
+            <th>Period</th>
+            <th>Monday</th>
+            <th>Tuesday</th>
+            <th>Wednesday</th>
+            <th>Thursday</th>
+            <th>Friday</th>
+            <th>Saturday</th>
+          </tr>
+        </thead>
+        <tbody>
 
-      <!-- Period 1: 09h–10h -->
-      <div class="tt-period-row">
-        <div class="tt-period-row__num">Period 1</div>
-        <div class="tt-period-row__time">09h – 10h</div>
-        <div class="tt-period-row__classes">
-          <span class="tt-period-chip y3">3ASCG2<span class="day-tag">Friday</span><span class="room-tag">Room S9</span></span>
-        </div>
+          <!-- P1: 09h – 10h -->
+          <tr>
+            <td class="tt-pt-time"><div class="tt-pt-pnum">P 1</div><div class="tt-pt-tslot">09h – 10h</div></td>
+            <td class="tt-pt-empty">–</td>
+            <td class="tt-pt-empty">–</td>
+            <td class="tt-pt-empty">–</td>
+            <td class="tt-pt-empty">–</td>
+            <td><span class="tt-pt-chip y3">3ASCG2<span class="tt-pt-room">Room S9</span></span></td>
+            <td class="tt-pt-empty">–</td>
+          </tr>
+
+          <!-- P2: 10h – 11h -->
+          <tr>
+            <td class="tt-pt-time"><div class="tt-pt-pnum">P 2</div><div class="tt-pt-tslot">10h – 11h</div></td>
+            <td class="tt-pt-empty">–</td>
+            <td class="tt-pt-empty">–</td>
+            <td class="tt-pt-empty">–</td>
+            <td class="tt-pt-empty">–</td>
+            <td><span class="tt-pt-chip y3">3ASCG1<span class="tt-pt-room">Room S9</span></span></td>
+            <td class="tt-pt-empty">–</td>
+          </tr>
+
+          <!-- P3: 11h – 12h -->
+          <tr>
+            <td class="tt-pt-time"><div class="tt-pt-pnum">P 3</div><div class="tt-pt-tslot">11h – 12h</div></td>
+            <td class="tt-pt-empty">–</td>
+            <td class="tt-pt-empty">–</td>
+            <td class="tt-pt-empty">–</td>
+            <td class="tt-pt-empty">–</td>
+            <td><span class="tt-pt-chip y3">3ASCG3<span class="tt-pt-room">Room S9</span></span></td>
+            <td class="tt-pt-empty">–</td>
+          </tr>
+
+          <!-- P4: 12h – 13h -->
+          <tr>
+            <td class="tt-pt-time"><div class="tt-pt-pnum">P 4</div><div class="tt-pt-tslot">12h – 13h</div></td>
+            <td class="tt-pt-empty">–</td>
+            <td><span class="tt-pt-chip y3">3ASCG3<span class="tt-pt-room">Room SPC</span></span></td>
+            <td class="tt-pt-empty">–</td>
+            <td class="tt-pt-empty">–</td>
+            <td><span class="tt-pt-chip y2">2ASCG4<span class="tt-pt-room">Room S9</span></span></td>
+            <td class="tt-pt-empty">–</td>
+          </tr>
+
+          <!-- P5: 13h – 14h -->
+          <tr>
+            <td class="tt-pt-time"><div class="tt-pt-pnum">P 5</div><div class="tt-pt-tslot">13h – 14h</div></td>
+            <td><span class="tt-pt-chip y1">1ASCG1<span class="tt-pt-room">Room S8</span></span></td>
+            <td><span class="tt-pt-chip y1">1ASCG2<span class="tt-pt-room">Room S8</span></span></td>
+            <td><span class="tt-pt-chip y2">2ASCG1<span class="tt-pt-room">Room S2</span></span></td>
+            <td><span class="tt-pt-chip y1">1ASCG4<span class="tt-pt-room">Room S8</span></span></td>
+            <td class="tt-pt-empty">–</td>
+            <td class="tt-pt-empty">–</td>
+          </tr>
+
+          <!-- P6: 14h – 15h -->
+          <tr>
+            <td class="tt-pt-time"><div class="tt-pt-pnum">P 6</div><div class="tt-pt-tslot">14h – 15h</div></td>
+            <td><span class="tt-pt-chip y2">2ASCG3<span class="tt-pt-room">Room S9</span></span></td>
+            <td><span class="tt-pt-chip y3">3ASCG4<span class="tt-pt-room">Room S9</span></span></td>
+            <td><span class="tt-pt-chip y2">2ASCG2<span class="tt-pt-room">Room S9</span></span></td>
+            <td><span class="tt-pt-chip y2">2ASCG3<span class="tt-pt-room">Room S9</span></span></td>
+            <td class="tt-pt-empty">–</td>
+            <td class="tt-pt-empty">–</td>
+          </tr>
+
+          <!-- P7: 15h – 16h -->
+          <tr>
+            <td class="tt-pt-time"><div class="tt-pt-pnum">P 7</div><div class="tt-pt-tslot">15h – 16h</div></td>
+            <td><span class="tt-pt-chip y2">2ASCG4<span class="tt-pt-room">Room S9</span></span></td>
+            <td><span class="tt-pt-chip y3">3ASCG2<span class="tt-pt-room">Room S9</span></span></td>
+            <td><span class="tt-pt-chip y3">3ASCG4<span class="tt-pt-room">Room S9</span></span></td>
+            <td><span class="tt-pt-chip y3">3ASCG1<span class="tt-pt-room">Room S9</span></span></td>
+            <td class="tt-pt-empty">–</td>
+            <td class="tt-pt-empty">–</td>
+          </tr>
+
+          <!-- P8: 16h – 17h -->
+          <tr>
+            <td class="tt-pt-time"><div class="tt-pt-pnum">P 8</div><div class="tt-pt-tslot">16h – 17h</div></td>
+            <td><span class="tt-pt-chip y2">2ASCG1<span class="tt-pt-room">Room S9</span></span></td>
+            <td><span class="tt-pt-chip y2">2ASCG2<span class="tt-pt-room">Room S9</span></span></td>
+            <td><span class="tt-pt-chip y1">1ASCG5<span class="tt-pt-room">Room S9</span></span></td>
+            <td><span class="tt-pt-chip y1">1ASCG3<span class="tt-pt-room">Room S9</span></span></td>
+            <td class="tt-pt-empty">–</td>
+            <td class="tt-pt-empty">–</td>
+          </tr>
+
+        </tbody>
+      </table>
+
+      <!-- Legend -->
+      <div class="tt-pt-legend" dir="ltr">
+        <span class="tt-pt-leg-item"><span class="tt-pt-leg-dot y1"></span>1st Year (1ASCG)</span>
+        <span class="tt-pt-leg-item"><span class="tt-pt-leg-dot y2"></span>2nd Year (2ASCG)</span>
+        <span class="tt-pt-leg-item"><span class="tt-pt-leg-dot y3"></span>3rd Year (3ASCG)</span>
       </div>
-
-      <!-- Period 2: 10h–11h -->
-      <div class="tt-period-row">
-        <div class="tt-period-row__num">Period 2</div>
-        <div class="tt-period-row__time">10h – 11h</div>
-        <div class="tt-period-row__classes">
-          <span class="tt-period-chip y3">3ASCG1<span class="day-tag">Friday</span><span class="room-tag">Room S9</span></span>
-        </div>
-      </div>
-
-      <!-- Period 3: 11h–12h -->
-      <div class="tt-period-row">
-        <div class="tt-period-row__num">Period 3</div>
-        <div class="tt-period-row__time">11h – 12h</div>
-        <div class="tt-period-row__classes">
-          <span class="tt-period-chip y3">3ASCG3<span class="day-tag">Friday</span><span class="room-tag">Room S9</span></span>
-        </div>
-      </div>
-
-      <!-- Period 4: 12h–13h -->
-      <div class="tt-period-row">
-        <div class="tt-period-row__num">Period 4</div>
-        <div class="tt-period-row__time">12h – 13h</div>
-        <div class="tt-period-row__classes">
-          <span class="tt-period-chip y3">3ASCG3<span class="day-tag">Tuesday</span><span class="room-tag">Room SPC</span></span>
-          <span class="tt-period-chip y2">2ASCG4<span class="day-tag">Friday</span><span class="room-tag">Room S9</span></span>
-        </div>
-      </div>
-
-      <!-- Period 5: 13h–14h -->
-      <div class="tt-period-row">
-        <div class="tt-period-row__num">Period 5</div>
-        <div class="tt-period-row__time">13h – 14h</div>
-        <div class="tt-period-row__classes">
-          <span class="tt-period-chip y1">1ASCG1<span class="day-tag">Monday</span><span class="room-tag">Room S8</span></span>
-          <span class="tt-period-chip y1">1ASCG2<span class="day-tag">Tuesday</span><span class="room-tag">Room S8</span></span>
-          <span class="tt-period-chip y2">2ASCG1<span class="day-tag">Wednesday</span><span class="room-tag">Room S2</span></span>
-          <span class="tt-period-chip y1">1ASCG4<span class="day-tag">Thursday</span><span class="room-tag">Room S8</span></span>
-        </div>
-      </div>
-
-      <!-- Period 6: 14h–15h -->
-      <div class="tt-period-row">
-        <div class="tt-period-row__num">Period 6</div>
-        <div class="tt-period-row__time">14h – 15h</div>
-        <div class="tt-period-row__classes">
-          <span class="tt-period-chip y2">2ASCG3<span class="day-tag">Monday</span><span class="room-tag">Room S9</span></span>
-          <span class="tt-period-chip y3">3ASCG4<span class="day-tag">Tuesday</span><span class="room-tag">Room S9</span></span>
-          <span class="tt-period-chip y2">2ASCG2<span class="day-tag">Wednesday</span><span class="room-tag">Room S9</span></span>
-          <span class="tt-period-chip y2">2ASCG3<span class="day-tag">Thursday</span><span class="room-tag">Room S9</span></span>
-        </div>
-      </div>
-
-      <!-- Period 7: 15h–16h -->
-      <div class="tt-period-row">
-        <div class="tt-period-row__num">Period 7</div>
-        <div class="tt-period-row__time">15h – 16h</div>
-        <div class="tt-period-row__classes">
-          <span class="tt-period-chip y2">2ASCG4<span class="day-tag">Monday</span><span class="room-tag">Room S9</span></span>
-          <span class="tt-period-chip y3">3ASCG2<span class="day-tag">Tuesday</span><span class="room-tag">Room S9</span></span>
-          <span class="tt-period-chip y3">3ASCG4<span class="day-tag">Wednesday</span><span class="room-tag">Room S9</span></span>
-          <span class="tt-period-chip y3">3ASCG1<span class="day-tag">Thursday</span><span class="room-tag">Room S9</span></span>
-        </div>
-      </div>
-
-      <!-- Period 8: 16h–17h -->
-      <div class="tt-period-row">
-        <div class="tt-period-row__num">Period 8</div>
-        <div class="tt-period-row__time">16h – 17h</div>
-        <div class="tt-period-row__classes">
-          <span class="tt-period-chip y2">2ASCG1<span class="day-tag">Monday</span><span class="room-tag">Room S9</span></span>
-          <span class="tt-period-chip y2">2ASCG2<span class="day-tag">Tuesday</span><span class="room-tag">Room S9</span></span>
-          <span class="tt-period-chip y1">1ASCG5<span class="day-tag">Wednesday</span><span class="room-tag">Room S9</span></span>
-          <span class="tt-period-chip y1">1ASCG3<span class="day-tag">Thursday</span><span class="room-tag">Room S9</span></span>
-        </div>
-      </div>
-
     </div>
   </div>
 </main>
