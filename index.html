@@ -1,142 +1,429 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MidSchool Manager - Dashboard</title>
-  <meta name="theme-color" content="#4F46E5">
+  <title>MidSchool Manager · Dashboard</title>
+  <meta name="theme-color" content="#2563EB">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icons/icon-192.svg">
   <link rel="stylesheet" href="css/main.css">
   <style>
-    .welcome-banner { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: #fff; border-radius: var(--radius-lg); padding: var(--space-xl); margin-bottom: var(--space-xl); }
-    .welcome-banner h1 { color: #fff; font-size: var(--text-2xl); margin-bottom: var(--space-xs); }
-    .welcome-banner p { color: rgba(255,255,255,0.8); margin: 0; }
-    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-md); margin-bottom: var(--space-xl); }
-    @media (max-width: 1024px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 767px) { .stats-grid { grid-template-columns: 1fr; } }
-    .dashboard-grid { display: grid; grid-template-columns: 3fr 2fr; gap: var(--space-lg); margin-bottom: var(--space-xl); }
+    /* ── Dashboard-specific styles ─────────────────────────────── */
+
+    /* Welcome Hero */
+    .welcome-hero {
+      position: relative;
+      background: linear-gradient(135deg, #1E3A8A 0%, #1D4ED8 55%, #2563EB 100%);
+      border-radius: var(--radius-xl);
+      padding: var(--space-xl) var(--space-2xl);
+      margin-bottom: var(--space-xl);
+      overflow: hidden;
+      color: #fff;
+    }
+    .welcome-hero::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -40px;
+      width: 240px; height: 240px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.05);
+      pointer-events: none;
+    }
+    .welcome-hero::after {
+      content: '';
+      position: absolute;
+      bottom: -80px; right: 120px;
+      width: 300px; height: 300px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.04);
+      pointer-events: none;
+    }
+    .welcome-hero__eyebrow {
+      font-size: var(--text-xs);
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.55);
+      margin-bottom: var(--space-xs);
+    }
+    .welcome-hero h1 {
+      color: #fff;
+      font-size: var(--text-2xl);
+      font-weight: 800;
+      margin-bottom: 4px;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+    }
+    .welcome-hero__sub {
+      color: rgba(255,255,255,0.65);
+      font-size: var(--text-sm);
+      margin-bottom: var(--space-lg);
+    }
+    .welcome-hero__sub p { color: rgba(255,255,255,0.65); margin: 0; }
+    .motivation-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-lg);
+      position: relative;
+      z-index: 1;
+    }
+    .motivation-stat {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: var(--text-sm);
+      color: rgba(255,255,255,0.75);
+      background: rgba(255,255,255,0.10);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: var(--radius-full);
+      padding: 6px 14px;
+      backdrop-filter: blur(8px);
+    }
+    .motivation-stat__value {
+      font-weight: 800;
+      font-size: var(--text-base);
+      color: #fff;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4,1fr);
+      gap: var(--space-md);
+      margin-bottom: var(--space-xl);
+    }
+    @media (max-width: 1024px) { .stats-grid { grid-template-columns: repeat(2,1fr); } }
+    @media (max-width: 540px)  { .stats-grid { grid-template-columns: 1fr 1fr; } }
+
+    /* Dashboard Grid */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 3fr 2fr;
+      gap: var(--space-lg);
+      margin-bottom: var(--space-xl);
+    }
     @media (max-width: 1024px) { .dashboard-grid { grid-template-columns: 1fr; } }
-    .quick-actions { display: flex; flex-wrap: wrap; gap: var(--space-sm); margin-top: var(--space-md); }
-    .classes-overview { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: var(--space-sm); }
-    .class-chip { display: flex; flex-direction: column; align-items: center; padding: var(--space-sm); border-radius: var(--radius-md); color: #fff; font-size: var(--text-xs); font-weight: 600; text-align: center; cursor: pointer; transition: transform var(--transition-fast); }
-    .class-chip:hover { transform: scale(1.05); }
-    .class-chip .count { font-size: var(--text-lg); font-weight: 700; }
-    .recent-item { display: flex; align-items: center; gap: var(--space-md); padding: var(--space-md); border-bottom: 1px solid var(--border); }
-    .recent-item:last-child { border-bottom: none; }
-    .recent-item__dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-    .recent-item__content { flex: 1; }
-    .recent-item__title { font-size: var(--text-sm); font-weight: 600; color: var(--text); }
-    .recent-item__meta { font-size: var(--text-xs); color: var(--text-secondary); }
-    .event-item { padding: var(--space-sm) var(--space-md); border-left: 3px solid var(--primary); margin-bottom: var(--space-sm); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; background: var(--bg); }
-    .event-item__title { font-size: var(--text-sm); font-weight: 600; }
-    .event-item__date { font-size: var(--text-xs); color: var(--text-secondary); }
-    .alert-card { display: flex; align-items: center; gap: var(--space-md); padding: var(--space-md); background: var(--warning-light); border-radius: var(--radius-md); margin-bottom: var(--space-sm); border-left: 4px solid var(--warning); }
-    .alert-card__icon { font-size: 20px; }
-    .alert-card__text { flex: 1; font-size: var(--text-sm); }
+
+    /* Quick Actions */
+    .quick-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+      margin-top: var(--space-md);
+    }
 
     /* Today's schedule */
-    .today-schedule { display: grid; grid-template-columns: 60px 1fr; gap: 1px; background: var(--border); border-radius: var(--radius-md); overflow: hidden; margin-bottom: var(--space-md); }
-    .today-schedule__period { background: var(--bg-secondary); padding: 10px 8px; font-size: var(--text-xs); font-weight: 600; color: var(--text-secondary); text-align: center; display: flex; align-items: center; justify-content: center; }
-    .today-schedule__class { background: var(--card); padding: 10px 12px; font-size: var(--text-sm); display: flex; align-items: center; gap: 8px; }
-    .today-schedule__class--empty { color: var(--text-tertiary); font-style: italic; }
-    .today-schedule__dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-    .today-schedule__class--active { background: var(--primary-light); border-left: 3px solid var(--primary); }
+    .today-schedule {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: var(--space-md);
+    }
+    .today-schedule__row {
+      display: grid;
+      grid-template-columns: 56px 1fr;
+      gap: 0;
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .today-schedule__period {
+      background: var(--bg);
+      padding: 10px 8px;
+      font-size: var(--text-xs);
+      font-weight: 700;
+      color: var(--text-tertiary);
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-right: 1px solid var(--border);
+    }
+    .today-schedule__class {
+      background: var(--card);
+      padding: 10px 14px;
+      font-size: var(--text-sm);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .today-schedule__class--empty {
+      color: var(--text-tertiary);
+      font-style: italic;
+    }
+    .today-schedule__dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .today-schedule__row--active .today-schedule__class {
+      background: var(--primary-50);
+    }
+    .today-schedule__row--active .today-schedule__period {
+      background: var(--primary-100);
+      color: var(--primary-dark);
+    }
 
-    /* Class progress cards */
-    .progress-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: var(--space-sm); }
-    .progress-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: var(--space-sm) var(--space-md); cursor: pointer; transition: all var(--transition-fast); position: relative; overflow: hidden; }
+    /* Recent items */
+    .recent-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .recent-item:last-child { border-bottom: none; }
+    .recent-item__dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .recent-item__content { flex: 1; min-width: 0; }
+    .recent-item__title {
+      font-size: var(--text-sm);
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .recent-item__meta {
+      font-size: var(--text-xs);
+      color: var(--text-tertiary);
+      margin-top: 1px;
+    }
+
+    /* Upcoming events */
+    .event-item {
+      padding: 10px var(--space-md);
+      border-left: 3px solid var(--primary);
+      margin-bottom: var(--space-sm);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      background: var(--primary-50);
+    }
+    .event-item__title {
+      font-size: var(--text-sm);
+      font-weight: 600;
+      color: var(--text);
+    }
+    .event-item__date {
+      font-size: var(--text-xs);
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    /* Alert cards */
+    .alert-card {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-md);
+      padding: var(--space-md);
+      background: var(--warning-light);
+      border-radius: var(--radius-md);
+      margin-bottom: var(--space-sm);
+      border-left: 4px solid var(--warning);
+    }
+    .alert-card__icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .alert-card__text { flex: 1; font-size: var(--text-sm); color: var(--text); }
+
+    /* Class progress */
+    .progress-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: var(--space-sm);
+    }
+    .progress-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: var(--space-sm) var(--space-md);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      position: relative;
+      overflow: hidden;
+    }
     .progress-card:hover { box-shadow: var(--shadow-sm); transform: translateY(-1px); }
     .progress-card--behind { border-color: var(--warning); border-width: 2px; }
-    .progress-card__name { font-size: var(--text-sm); font-weight: 700; margin-bottom: 4px; }
-    .progress-card__bar { height: 6px; background: var(--bg-tertiary); border-radius: 3px; overflow: hidden; margin-bottom: 4px; }
-    .progress-card__fill { height: 100%; border-radius: 3px; transition: width 0.5s ease; }
-    .progress-card__meta { font-size: 11px; color: var(--text-secondary); }
+    .progress-card__name  { font-size: var(--text-sm); font-weight: 700; margin-bottom: 5px; }
+    .progress-card__bar   { height: 5px; background: var(--bg-secondary); border-radius: 3px; overflow: hidden; margin-bottom: 5px; }
+    .progress-card__fill  { height: 100%; border-radius: 3px; transition: width 0.5s ease; }
+    .progress-card__meta  { font-size: 11px; color: var(--text-secondary); }
     .progress-card__behind { position: absolute; top: 4px; right: 4px; font-size: 10px; }
 
-    /* Motivation banner */
-    .motivation-stats { display: flex; gap: var(--space-lg); margin-top: var(--space-sm); }
-    .motivation-stat { display: flex; align-items: center; gap: 6px; font-size: var(--text-sm); color: rgba(255,255,255,0.9); }
-    .motivation-stat__value { font-weight: 800; font-size: var(--text-lg); }
+    /* Classes overview chips */
+    .classes-overview {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
+      gap: var(--space-sm);
+    }
+    .class-chip {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: var(--space-sm) var(--space-xs);
+      border-radius: var(--radius-md);
+      color: #fff;
+      font-size: var(--text-xs);
+      font-weight: 600;
+      text-align: center;
+      cursor: pointer;
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+    }
+    .class-chip:hover { transform: scale(1.05); box-shadow: var(--shadow-md); }
+    .class-chip .count { font-size: var(--text-lg); font-weight: 800; }
 
-    /* Welcome modal styles */
+    /* Welcome modal */
     .msm-welcome-step { display: none; }
     .msm-welcome-step--active { display: block; }
-    .msm-welcome-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 8px; }
-    .msm-welcome-text { color: #6b7280; margin-bottom: 16px; }
+    .msm-welcome-title { font-size: 1.5rem; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.03em; }
+    .msm-welcome-text  { color: var(--text-secondary); margin-bottom: 16px; font-size: var(--text-sm); }
     .msm-welcome-field { margin-bottom: 16px; }
     .msm-welcome-field label { display: block; font-weight: 600; margin-bottom: 4px; font-size: 14px; }
-    .msm-welcome-field input { width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 15px; }
-    .msm-welcome-field input:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.15); }
-    .msm-class-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
-    .msm-class-chip { padding: 6px 14px; border-radius: 20px; color: #fff; font-weight: 600; font-size: 13px; }
-    .msm-welcome-hint { font-size: 13px; font-style: italic; }
-    .msm-welcome-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 24px; padding-top: 16px; border-top: 1px solid #e5e7eb; }
-    .msm-welcome-steps-indicator { font-size: 13px; color: #9ca3af; }
-    .msm-btn { padding: 10px 24px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: background 0.15s; }
-    .msm-btn--primary { background: #2563eb; color: #fff; }
-    .msm-btn--primary:hover { background: #1d4ed8; }
-    .msm-btn--secondary { background: #f3f4f6; color: #374151; border: 1px solid #d1d5db; }
-    .msm-btn--secondary:hover { background: #e5e7eb; }
+    .msm-welcome-field input {
+      width: 100%; padding: 10px 12px;
+      border: 1.5px solid var(--border); border-radius: var(--radius-md);
+      font-size: 15px; font-family: var(--font-family);
+      transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    }
+    .msm-welcome-field input:focus {
+      outline: none; border-color: var(--primary); box-shadow: var(--shadow-focus);
+    }
+    .msm-class-chips {
+      display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px;
+    }
+    .msm-class-chip {
+      padding: 5px 14px; border-radius: var(--radius-full);
+      color: #fff; font-weight: 600; font-size: 13px;
+    }
+    .msm-welcome-hint { font-size: 13px; font-style: italic; color: var(--text-tertiary); }
+    .msm-welcome-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border);
+    }
+    .msm-welcome-steps-indicator { font-size: 13px; color: var(--text-tertiary); }
+    .msm-btn {
+      padding: 10px 24px; border-radius: var(--radius-md);
+      font-size: 14px; font-weight: 600; cursor: pointer; border: none;
+      transition: all var(--transition-fast); font-family: var(--font-family);
+    }
+    .msm-btn--primary { background: var(--primary); color: #fff; }
+    .msm-btn--primary:hover { background: var(--primary-hover); }
+    .msm-btn--secondary {
+      background: var(--bg); color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .msm-btn--secondary:hover { background: var(--bg-secondary); }
+
+    /* Responsive welcome banner on mobile */
+    @media (max-width: 767px) {
+      .welcome-hero { padding: var(--space-lg); }
+      .welcome-hero h1 { font-size: var(--text-xl); }
+      .motivation-stats { gap: var(--space-sm); }
+    }
   </style>
 </head>
 <body>
-  <!-- Sidebar -->
+
+  <!-- ╔══════════════════════════════════════════╗ -->
+  <!-- ║                SIDEBAR                   ║ -->
+  <!-- ╚══════════════════════════════════════════╝ -->
   <nav class="sidebar" id="sidebar">
     <div class="sidebar__brand">
       <div class="sidebar__brand-icon">📚</div>
-      <span class="sidebar__brand-name">MidSchool Manager</span>
+      <div>
+        <span class="sidebar__brand-name">MidSchool Manager</span>
+        <span class="sidebar__brand-sub">ESL · Spotlight 1–3</span>
+      </div>
     </div>
+
     <div class="sidebar__nav">
-      <div class="sidebar__section-label">Main</div>
+      <div class="sidebar__section-label">Overview</div>
+
       <a href="index.html" class="sidebar__link sidebar__link--active" data-nav="index.html">
-        <span class="sidebar__icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
+        <span class="sidebar__icon">
+          <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </span>
         <span class="sidebar__label">Dashboard</span>
       </a>
-      <a href="teaching-hub.html" class="sidebar__link" data-nav="teaching-hub.html"><span class="sidebar__icon"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></span><span class="sidebar__label">Teaching Hub</span></a>
+
+      <a href="teaching-hub.html" class="sidebar__link" data-nav="teaching-hub.html">
+        <span class="sidebar__icon">
+          <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        </span>
+        <span class="sidebar__label">Teaching Hub</span>
+      </a>
+
       <a href="lessons.html" class="sidebar__link" data-nav="lessons.html">
-        <span class="sidebar__icon"><svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span>
+        <span class="sidebar__icon">
+          <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        </span>
         <span class="sidebar__label">Lesson Records</span>
       </a>
-      <a href="materials.html" class="sidebar__link" data-nav="materials.html">
-        <span class="sidebar__icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span>
-        <span class="sidebar__label">Materials</span>
-      </a>
+
       <a href="plans.html" class="sidebar__link" data-nav="plans.html">
-        <span class="sidebar__icon"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></span>
+        <span class="sidebar__icon">
+          <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </span>
         <span class="sidebar__label">Lesson Plans</span>
       </a>
+
+      <a href="materials.html" class="sidebar__link" data-nav="materials.html">
+        <span class="sidebar__icon">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        </span>
+        <span class="sidebar__label">Materials</span>
+      </a>
+
       <a href="calendar.html" class="sidebar__link" data-nav="calendar.html">
-        <span class="sidebar__icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
+        <span class="sidebar__icon">
+          <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </span>
         <span class="sidebar__label">Calendar</span>
       </a>
+
       <div class="sidebar__section-label">Students</div>
+
       <a href="students.html" class="sidebar__link" data-nav="students.html">
-        <span class="sidebar__icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+        <span class="sidebar__icon">
+          <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </span>
         <span class="sidebar__label">Students</span>
       </a>
+
       <a href="assessments.html" class="sidebar__link" data-nav="assessments.html">
-        <span class="sidebar__icon"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span>
+        <span class="sidebar__icon">
+          <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </span>
         <span class="sidebar__label">Assessments</span>
       </a>
+
       <a href="remedial.html" class="sidebar__link" data-nav="remedial.html">
-        <span class="sidebar__icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>
+        <span class="sidebar__icon">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </span>
         <span class="sidebar__label">Remedial Work</span>
       </a>
     </div>
+
     <div class="sidebar__divider"></div>
+
     <div class="sidebar__footer">
       <a href="settings.html" class="sidebar__link" data-nav="settings.html">
-        <span class="sidebar__icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>
+        <span class="sidebar__icon">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </span>
         <span class="sidebar__label">Settings</span>
       </a>
     </div>
   </nav>
 
-  <!-- Sidebar overlay for mobile -->
+  <!-- Sidebar overlay (mobile) -->
   <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-  <!-- Header -->
+  <!-- ╔══════════════════════════════════════════╗ -->
+  <!-- ║                 HEADER                   ║ -->
+  <!-- ╚══════════════════════════════════════════╝ -->
   <header class="header">
     <button class="hamburger" id="hamburgerBtn" aria-label="Toggle navigation">
       <span class="hamburger__line"></span>
@@ -146,23 +433,33 @@
     <div class="header__inner">
       <h1 class="header__title" data-header-title>Dashboard</h1>
       <div class="header__actions">
-        <button class="header__search-btn" id="headerSearchBtn" aria-label="Search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
+        <button class="header__search-btn" id="headerSearchBtn" aria-label="Quick search (Ctrl+K)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+        </button>
         <div class="header__info" data-header-info></div>
       </div>
     </div>
   </header>
 
-  <!-- Main Content -->
+  <!-- ╔══════════════════════════════════════════╗ -->
+  <!-- ║              MAIN CONTENT                ║ -->
+  <!-- ╚══════════════════════════════════════════╝ -->
   <main class="main-content">
     <nav class="breadcrumbs" id="breadcrumbs" aria-label="Breadcrumbs"></nav>
-    <!-- Welcome Banner with Stats -->
-    <div class="welcome-banner" id="welcomeBanner">
-      <h1 id="welcomeName">Welcome!</h1>
-      <p id="welcomeSubtitle">Here's your teaching overview</p>
+
+    <!-- ── Welcome Hero ── -->
+    <div class="welcome-hero" id="welcomeBanner">
+      <div class="welcome-hero__eyebrow">Spotlight ESL · Moroccan Middle School</div>
+      <h1 id="welcomeName">Welcome back!</h1>
+      <div class="welcome-hero__sub">
+        <p id="welcomeSubtitle">Here's your teaching overview for today.</p>
+      </div>
       <div class="motivation-stats" id="motivationStats"></div>
     </div>
 
-    <!-- Action Grid (Quick Actions) -->
+    <!-- ── Quick Action Cards ── -->
     <div class="action-grid" id="actionGrid">
       <a href="lessons.html?action=new" class="action-card action-card--primary">
         <span class="action-card__icon">📖</span>
@@ -182,31 +479,31 @@
       </a>
     </div>
 
-    <!-- Stats Grid -->
+    <!-- ── Key Metrics ── -->
     <div class="stats-grid stats-grid--scroll" id="statsGrid">
-      <div class="stat-card" onclick="location.href='students.html'">
-        <div class="stat-card__icon" style="background: var(--primary-light); color: var(--primary);">👥</div>
+      <div class="stat-card" onclick="location.href='students.html'" style="--card-accent:#2563EB">
+        <div class="stat-card__icon" style="background:var(--primary-light);color:var(--primary);">👥</div>
         <div>
           <div class="stat-card__value" id="statStudents">0</div>
           <div class="stat-card__label">Total Students</div>
         </div>
       </div>
-      <div class="stat-card" onclick="location.href='lessons.html'">
-        <div class="stat-card__icon" style="background: var(--success-light); color: var(--success);">📖</div>
+      <div class="stat-card" onclick="location.href='lessons.html'" style="--card-accent:#059669">
+        <div class="stat-card__icon" style="background:var(--success-light);color:var(--success);">📖</div>
         <div>
           <div class="stat-card__value" id="statLessons">0</div>
           <div class="stat-card__label">Lessons Logged</div>
         </div>
       </div>
-      <div class="stat-card" onclick="location.href='remedial.html'">
-        <div class="stat-card__icon" style="background: var(--warning-light); color: var(--warning);">⚠️</div>
+      <div class="stat-card" onclick="location.href='remedial.html'" style="--card-accent:#D97706">
+        <div class="stat-card__icon" style="background:var(--warning-light);color:var(--warning);">⚠️</div>
         <div>
           <div class="stat-card__value" id="statRemedial">0</div>
           <div class="stat-card__label">Pending Remedials</div>
         </div>
       </div>
-      <div class="stat-card" onclick="location.href='assessments.html'">
-        <div class="stat-card__icon" style="background: var(--purple-light); color: var(--purple);">📝</div>
+      <div class="stat-card" onclick="location.href='assessments.html'" style="--card-accent:#7C3AED">
+        <div class="stat-card__icon" style="background:var(--purple-light);color:var(--purple);">📊</div>
         <div>
           <div class="stat-card__value" id="statAssessments">0</div>
           <div class="stat-card__label">Assessments</div>
@@ -214,45 +511,64 @@
       </div>
     </div>
 
-    <!-- Behind Schedule Alerts (shown only when classes are behind) -->
+    <!-- ── Behind Schedule Alerts ── -->
     <div class="card mb-3" id="behindAlertsCard" style="display:none">
       <div class="card__header">
-        <h3 class="card__title" style="color:var(--warning)">Classes Behind Schedule</h3>
+        <h3 class="card__title">
+          <span class="card__title-accent" style="background:var(--warning)"></span>
+          Classes Behind Schedule
+        </h3>
       </div>
       <div id="behindAlerts"></div>
     </div>
 
-    <!-- Dashboard Grid -->
+    <!-- ── Main Dashboard Grid ── -->
     <div class="dashboard-grid">
+
       <!-- Left Column -->
       <div>
         <!-- Today's Schedule -->
         <div class="card mb-3">
           <div class="card__header">
-            <h3 class="card__title">Today's Schedule</h3>
+            <h3 class="card__title">
+              <span class="card__title-accent"></span>
+              Today's Schedule
+            </h3>
             <a href="calendar.html" class="btn btn-ghost btn-sm">Calendar →</a>
           </div>
           <div id="todaySchedule">
-            <p class="text-sm" style="color:var(--text-secondary)">Set up your <a href="calendar.html" onclick="setTimeout(function(){document.getElementById('btnEditTimetable').click()},500)">timetable</a> to see today's classes here.</p>
+            <p class="text-sm" style="color:var(--text-secondary)">
+              Set up your <a href="calendar.html" onclick="setTimeout(function(){document.getElementById('btnEditTimetable')&&document.getElementById('btnEditTimetable').click()},500)">timetable</a> to see today's classes here.
+            </p>
           </div>
         </div>
 
         <!-- Recent Lesson Records -->
         <div class="card mb-3">
           <div class="card__header">
-            <h3 class="card__title">Recent Lesson Records</h3>
+            <h3 class="card__title">
+              <span class="card__title-accent"></span>
+              Recent Lesson Records
+            </h3>
             <a href="lessons.html" class="btn btn-ghost btn-sm">View All →</a>
           </div>
           <div id="recentLessons">
             <div class="empty-state">
-              <p class="text-sm" style="color:var(--text-secondary)">No lessons logged yet. <a href="lessons.html">Log your first lesson</a></p>
+              <div class="empty-state__icon">📖</div>
+              <p class="empty-state__title">No lessons yet</p>
+              <p class="empty-state__text"><a href="lessons.html">Log your first lesson</a> to get started.</p>
             </div>
           </div>
         </div>
 
-        <!-- Quick Actions (desktop only, replaces action-grid cards on large screens) -->
+        <!-- Quick Actions (desktop only) -->
         <div class="card desktop-quick-actions">
-          <h3 class="card__title">Quick Actions</h3>
+          <div class="card__header">
+            <h3 class="card__title">
+              <span class="card__title-accent"></span>
+              Quick Actions
+            </h3>
+          </div>
           <div class="quick-actions">
             <a href="lessons.html?action=new" class="btn btn-primary">+ Log Lesson</a>
             <a href="assessments.html?action=grade" class="btn btn-secondary">+ Add Assessment</a>
@@ -267,41 +583,56 @@
         <!-- Upcoming Events -->
         <div class="card mb-3">
           <div class="card__header">
-            <h3 class="card__title">Upcoming Events</h3>
+            <h3 class="card__title">
+              <span class="card__title-accent"></span>
+              Upcoming Events
+            </h3>
             <a href="calendar.html" class="btn btn-ghost btn-sm">Calendar →</a>
           </div>
           <div id="upcomingEvents">
-            <p class="text-sm" style="color:var(--text-secondary)">No upcoming events. <a href="calendar.html">Add events to your calendar</a></p>
+            <p class="text-sm" style="color:var(--text-secondary)">
+              No upcoming events. <a href="calendar.html">Add events</a> to your calendar.
+            </p>
           </div>
         </div>
 
-        <!-- Classes Overview with Progress -->
+        <!-- Class Progress -->
         <div class="card mb-3">
           <div class="card__header">
-            <h3 class="card__title">Class Progress</h3>
-            <span class="badge" id="classCount">13 classes</span>
+            <h3 class="card__title">
+              <span class="card__title-accent"></span>
+              Class Progress
+            </h3>
+            <span class="badge badge-info" id="classCount">13 classes</span>
           </div>
           <div class="progress-grid" id="classesOverview"></div>
         </div>
       </div>
     </div>
 
-    <!-- Remedial Alerts -->
+    <!-- ── Remedial Alerts ── -->
     <div class="card" id="remedialAlertsCard" style="display:none">
       <div class="card__header">
-        <h3 class="card__title">Remedial Alerts</h3>
+        <h3 class="card__title">
+          <span class="card__title-accent" style="background:var(--danger)"></span>
+          Remedial Alerts
+        </h3>
         <a href="remedial.html" class="btn btn-ghost btn-sm">View All →</a>
       </div>
       <div id="remedialAlerts"></div>
     </div>
 
-    <!-- Floating Action Button (Mobile) -->
+    <!-- FAB (Mobile) -->
     <button class="fab" id="fabButton" aria-label="Quick actions">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+      </svg>
     </button>
   </main>
 
-  <!-- Bottom Navigation (Mobile) -->
+  <!-- ╔══════════════════════════════════════════╗ -->
+  <!-- ║          BOTTOM NAV (MOBILE)             ║ -->
+  <!-- ╚══════════════════════════════════════════╝ -->
   <nav class="bottom-nav" id="bottomNav">
     <a href="index.html" class="bottom-nav__item" data-nav="index.html">
       <svg class="bottom-nav__icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
@@ -325,6 +656,7 @@
     </button>
   </nav>
 
+  <!-- Scripts -->
   <script src="js/storage.js"></script>
   <script src="js/data-models.js"></script>
   <script src="js/ui-helpers.js"></script>
