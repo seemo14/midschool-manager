@@ -1,20 +1,19 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MidSchool Manager · Remedial Work</title>
+  <title>MidSchool Manager · Lesson Files</title>
   <meta name="theme-color" content="#2563EB">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icons/icon-192.svg">
   <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
-  <!-- Top Navigation -->
+
+<!-- Top Navigation -->
 <header class="topnav" id="topnav">
   <div class="topnav__inner">
-
-    <!-- Brand -->
     <a href="index.html" class="topnav__brand" aria-label="MidSchool Manager home">
       <div class="topnav__brand-icon">📚</div>
       <div class="topnav__brand-text">
@@ -22,10 +21,7 @@
         <span class="topnav__brand-sub">ESL · Spotlight</span>
       </div>
     </a>
-
     <div class="topnav__separator" aria-hidden="true"></div>
-
-    <!-- Desktop Navigation -->
     <nav class="topnav__nav" id="topnavNav" aria-label="Main navigation">
       <div class="topnav__group">
         <a href="index.html"        class="topnav__link" data-nav="index.html">
@@ -57,9 +53,7 @@
           Calendar
         </a>
       </div>
-
       <div class="topnav__nav-divider" aria-hidden="true"></div>
-
       <div class="topnav__group">
         <a href="students.html"    class="topnav__link" data-nav="students.html">
           <svg class="topnav__link-icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
@@ -75,8 +69,6 @@
         </a>
       </div>
     </nav>
-
-    <!-- Right Actions -->
     <div class="topnav__actions">
       <div class="topnav__teacher-info" data-header-info></div>
       <button class="topnav__action-btn" id="headerSearchBtn" aria-label="Search (Ctrl+K)">
@@ -86,14 +78,11 @@
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       </a>
     </div>
-
-    <!-- Mobile hamburger -->
     <button class="hamburger" id="hamburgerBtn" aria-label="Toggle menu" aria-expanded="false">
       <span class="hamburger__line"></span>
       <span class="hamburger__line"></span>
       <span class="hamburger__line"></span>
     </button>
-
   </div>
 </header>
 
@@ -151,49 +140,177 @@
 </div>
 <div class="mobile-menu-backdrop" id="mobileMenuBackdrop"></div>
 
-  <main class="main-content">
-    <nav class="breadcrumbs" id="breadcrumbs" aria-label="Breadcrumbs"></nav>
-    <div class="page-header">
-      <h2>Remedial Work Tracking</h2>
-      <div class="page-header__actions"><button class="btn btn-primary" id="btnFlagStudent">+ Flag Student</button></div>
-    </div>
-    <div class="filter-bar">
-      <div class="form-group"><label for="remFilterClass">Class</label><select id="remFilterClass"></select></div>
-      <div class="form-group"><label for="remFilterArea">Area</label><select id="remFilterArea"><option value="">All</option><option value="grammar">Grammar</option><option value="vocabulary">Vocabulary</option><option value="reading">Reading</option><option value="writing">Writing</option><option value="speaking">Speaking</option><option value="listening">Listening</option><option value="general">General</option></select></div>
-    </div>
-    <div id="kanbanBoard"></div>
-  </main>
+<main class="main-content">
+  <nav class="breadcrumbs" id="breadcrumbs" aria-label="Breadcrumbs"></nav>
 
-  <!-- Bottom Navigation (Mobile) -->
-  <nav class="bottom-nav" id="bottomNav">
-    <a href="index.html" class="bottom-nav__item" data-nav="index.html">
-      <svg class="bottom-nav__icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-      <span class="bottom-nav__label">Home</span>
-    </a>
-    <a href="teaching-hub.html" class="bottom-nav__item" data-nav="teaching-hub.html">
-      <svg class="bottom-nav__icon" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-      <span class="bottom-nav__label">Hub</span>
-    </a>
-    <a href="assessments.html" class="bottom-nav__item" data-nav="assessments.html">
-      <svg class="bottom-nav__icon" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-      <span class="bottom-nav__label">Grades</span>
-    </a>
-    <a href="students.html" class="bottom-nav__item" data-nav="students.html">
-      <svg class="bottom-nav__icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-      <span class="bottom-nav__label">Students</span>
-    </a>
-    <button class="bottom-nav__item bottom-nav__more" id="bottomNavMore">
-      <svg class="bottom-nav__icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
-      <span class="bottom-nav__label">More</span>
-    </button>
-  </nav>
+  <div class="page-header">
+    <h2>Lesson Files</h2>
+    <div class="page-header__actions">
+      <button class="btn btn-primary" id="btnUpload">+ Upload HTML File</button>
+    </div>
+  </div>
 
-  <script src="js/storage.js"></script>
-  <script src="js/data-models.js"></script>
-  <script src="js/ui-helpers.js"></script>
-  <script src="js/app.js"></script>
-  <script src="js/sidepanel.js"></script>
-  <script src="js/command-palette.js"></script>
-  <script src="js/remedial.js"></script>
+  <!-- Filters -->
+  <div class="filter-bar" id="filterBar">
+    <div class="form-group">
+      <label for="filterClass">Class</label>
+      <select id="filterClass">
+        <option value="">All Classes</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="filterType">Type</label>
+      <select id="filterType">
+        <option value="">All Types</option>
+        <option value="presentation">Presentation</option>
+        <option value="worksheet">Worksheet</option>
+        <option value="activity">Activity</option>
+        <option value="other">Other</option>
+      </select>
+    </div>
+    <div class="form-group" style="flex:1;min-width:160px">
+      <label for="filterSearch">Search</label>
+      <input type="text" id="filterSearch" placeholder="Title or filename…">
+    </div>
+  </div>
+
+  <!-- Class tabs -->
+  <div class="lf-class-tabs" id="classTabs"></div>
+
+  <!-- Files grid -->
+  <div id="filesGrid" class="lf-grid"></div>
+</main>
+
+<!-- =========================================================
+     UPLOAD MODAL
+     ========================================================= -->
+<div class="modal-overlay" id="uploadModal" style="display:none">
+  <div class="modal" style="max-width:560px">
+    <div class="modal__header">
+      <h3 class="modal__title">Upload HTML File</h3>
+      <button class="modal__close" id="uploadModalClose" aria-label="Close">&times;</button>
+    </div>
+    <div class="modal__body">
+
+      <!-- Drop zone -->
+      <div class="lf-drop-zone" id="dropZone">
+        <div class="lf-drop-zone__icon">📂</div>
+        <p class="lf-drop-zone__text">Drag &amp; drop an HTML file here, or</p>
+        <label class="btn btn-secondary" style="cursor:pointer">
+          Choose File
+          <input type="file" id="fileInput" accept=".html,.htm" style="display:none">
+        </label>
+        <p class="lf-drop-zone__hint">Only .html / .htm files are accepted</p>
+      </div>
+      <p id="fileSelectedName" style="margin:8px 0 0;font-size:13px;color:var(--primary);display:none"></p>
+
+      <!-- Metadata form (shown after file is selected) -->
+      <div id="uploadForm" style="display:none;margin-top:16px">
+        <div class="form-group">
+          <label for="ufTitle">Title <span style="color:var(--danger)">*</span></label>
+          <input type="text" id="ufTitle" placeholder="e.g. Present Continuous – Lesson 2">
+        </div>
+        <div class="form-group">
+          <label for="ufType">File Type</label>
+          <select id="ufType">
+            <option value="presentation">📊 Presentation</option>
+            <option value="worksheet">📝 Worksheet</option>
+            <option value="activity">🎯 Activity</option>
+            <option value="other">📄 Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Classes (select all that apply)</label>
+          <div id="ufClasses" class="lf-class-checkboxes"></div>
+        </div>
+        <div class="form-group">
+          <label for="ufDescription">Notes (optional)</label>
+          <textarea id="ufDescription" rows="2" placeholder="Any notes about this file…"></textarea>
+        </div>
+      </div>
+
+    </div>
+    <div class="modal__footer">
+      <button class="btn btn-secondary" id="btnUploadCancel">Cancel</button>
+      <button class="btn btn-primary" id="btnUploadSave" disabled>Save File</button>
+    </div>
+  </div>
+</div>
+
+<!-- =========================================================
+     PREVIEW / EDIT MODAL  (iframe + editor)
+     ========================================================= -->
+<div class="modal-overlay" id="previewModal" style="display:none">
+  <div class="modal lf-preview-modal">
+    <div class="modal__header">
+      <h3 class="modal__title" id="previewModalTitle">Preview</h3>
+      <div style="display:flex;gap:8px;align-items:center;margin-left:auto">
+        <button class="btn btn-sm btn-secondary" id="btnToggleEditor" title="Toggle HTML editor">&#60;/&#62; Edit</button>
+        <button class="btn btn-sm btn-secondary" id="btnPreviewPresent" title="Open in new tab">⛶ Present</button>
+        <button class="btn btn-sm btn-secondary" id="btnPreviewPrint" title="Print / Save as PDF">🖨 Print</button>
+        <button class="modal__close" id="previewModalClose" aria-label="Close">&times;</button>
+      </div>
+    </div>
+    <div class="modal__body lf-preview-body">
+      <!-- iframe view -->
+      <iframe id="previewIframe" class="lf-preview-iframe" sandbox="allow-same-origin allow-scripts" title="HTML Preview"></iframe>
+      <!-- editor view -->
+      <div id="editorPanel" class="lf-editor-panel" style="display:none">
+        <textarea id="htmlEditor" class="lf-html-editor" spellcheck="false"></textarea>
+        <div style="display:flex;gap:8px;padding:8px;border-top:1px solid var(--border)">
+          <button class="btn btn-sm btn-secondary" id="btnEditorRefresh">↺ Refresh Preview</button>
+          <button class="btn btn-sm btn-primary"   id="btnEditorSave">Save Changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =========================================================
+     EDIT METADATA MODAL
+     ========================================================= -->
+<div class="modal-overlay" id="editMetaModal" style="display:none">
+  <div class="modal" style="max-width:520px">
+    <div class="modal__header">
+      <h3 class="modal__title">Edit File Details</h3>
+      <button class="modal__close" id="editMetaModalClose" aria-label="Close">&times;</button>
+    </div>
+    <div class="modal__body">
+      <div class="form-group">
+        <label for="emTitle">Title <span style="color:var(--danger)">*</span></label>
+        <input type="text" id="emTitle">
+      </div>
+      <div class="form-group">
+        <label for="emType">File Type</label>
+        <select id="emType">
+          <option value="presentation">📊 Presentation</option>
+          <option value="worksheet">📝 Worksheet</option>
+          <option value="activity">🎯 Activity</option>
+          <option value="other">📄 Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Classes</label>
+        <div id="emClasses" class="lf-class-checkboxes"></div>
+      </div>
+      <div class="form-group">
+        <label for="emDescription">Notes</label>
+        <textarea id="emDescription" rows="2"></textarea>
+      </div>
+    </div>
+    <div class="modal__footer">
+      <button class="btn btn-secondary" id="btnEditMetaCancel">Cancel</button>
+      <button class="btn btn-primary"   id="btnEditMetaSave">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Scripts -->
+<script src="js/storage.js"></script>
+<script src="js/data-models.js"></script>
+<script src="js/ui-helpers.js"></script>
+<script src="js/app.js"></script>
+<script src="js/file-store.js"></script>
+<script src="js/files.js"></script>
 </body>
 </html>

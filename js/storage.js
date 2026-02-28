@@ -19,6 +19,7 @@
         LESSON_RECORDS:   'msm_lesson_records',
         MATERIALS:        'msm_materials',
         LESSON_PLANS:     'msm_lesson_plans',
+        LESSON_FILES:     'msm_lesson_files',
         CALENDAR_EVENTS:  'msm_calendar_events',
         ASSESSMENTS:      'msm_assessments',
         REMEDIAL:         'msm_remedial',
@@ -32,6 +33,7 @@
         STORAGE_KEYS.LESSON_RECORDS,
         STORAGE_KEYS.MATERIALS,
         STORAGE_KEYS.LESSON_PLANS,
+        STORAGE_KEYS.LESSON_FILES,
         STORAGE_KEYS.CALENDAR_EVENTS,
         STORAGE_KEYS.ASSESSMENTS,
         STORAGE_KEYS.REMEDIAL
@@ -463,6 +465,7 @@
         setData(STORAGE_KEYS.LESSON_RECORDS,   []);
         setData(STORAGE_KEYS.MATERIALS,        []);
         setData(STORAGE_KEYS.LESSON_PLANS,     []);
+        setData(STORAGE_KEYS.LESSON_FILES,     []);
         setData(STORAGE_KEYS.CALENDAR_EVENTS,  []);
         setData(STORAGE_KEYS.ASSESSMENTS,      []);
         setData(STORAGE_KEYS.REMEDIAL,         []);

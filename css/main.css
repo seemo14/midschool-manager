@@ -1774,3 +1774,224 @@ input.input-error:focus, select.input-error:focus, textarea.input-error:focus {
 .msm-toast--error   { border-left: 3px solid var(--danger); }
 .msm-toast--warning { border-left: 3px solid var(--warning); }
 .msm-toast--info    { border-left: 3px solid var(--primary); }
+
+/* ==========================================================================
+   LESSON FILES PAGE  (files.html)
+   ========================================================================== */
+
+/* ── Class tabs ── */
+.lf-class-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+.lf-tab {
+  padding: 5px 13px;
+  border-radius: 999px;
+  border: 1.5px solid var(--border);
+  background: var(--card);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all .15s;
+  white-space: nowrap;
+}
+.lf-tab:hover          { border-color: var(--primary-200); color: var(--primary); }
+.lf-tab--active        { background: var(--primary); border-color: var(--primary); color: #fff; }
+.lf-tab--group         { border-style: dashed; }
+
+/* ── File grid ── */
+.lf-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+/* ── File card ── */
+.lf-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  transition: box-shadow .15s;
+}
+.lf-card:hover { box-shadow: var(--shadow-md); }
+
+.lf-card__icon {
+  font-size: 32px;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.lf-card__body  { flex: 1; min-width: 0; }
+.lf-card__title {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--text);
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.lf-card__meta {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+.lf-card__filename { font-family: monospace; }
+.lf-card__classes  { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 6px; }
+.lf-card__desc     { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+.lf-card__actions  {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
+.lf-class-badge {
+  display: inline-block;
+  padding: 1px 7px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* ── Drop zone ── */
+.lf-drop-zone {
+  border: 2px dashed var(--border);
+  border-radius: var(--radius-lg);
+  padding: 32px 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color .15s, background .15s;
+}
+.lf-drop-zone--over,
+.lf-drop-zone:hover {
+  border-color: var(--primary);
+  background: var(--primary-50);
+}
+.lf-drop-zone__icon { font-size: 40px; margin-bottom: 8px; }
+.lf-drop-zone__text { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 10px; }
+.lf-drop-zone__hint { font-size: 11px; color: var(--text-secondary); margin-top: 8px; }
+
+/* ── Class checkboxes in upload / edit forms ── */
+.lf-class-checkboxes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px 0;
+}
+.lf-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  transition: background .1s;
+}
+.lf-checkbox-label:hover { background: var(--bg-secondary); }
+.lf-checkbox-label input[type=checkbox] { width: 14px; height: 14px; cursor: pointer; }
+.lf-class-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ── Preview / edit modal ── */
+.lf-preview-modal {
+  width: 96vw;
+  max-width: 1200px;
+  height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+.lf-preview-body {
+  flex: 1;
+  overflow: hidden;
+  padding: 0 !important;
+  display: flex;
+  flex-direction: column;
+}
+.lf-preview-iframe {
+  flex: 1;
+  width: 100%;
+  border: none;
+  background: #fff;
+}
+.lf-editor-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.lf-html-editor {
+  flex: 1;
+  width: 100%;
+  font-family: 'Consolas', 'Monaco', monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  padding: 12px;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  background: #1e1e1e;
+  color: #d4d4d4;
+  resize: none;
+  tab-size: 2;
+}
+.lf-html-editor:focus { outline: none; }
+
+/* ── Attached-files section inside lesson modals ── */
+.lf-attached {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-light);
+}
+.lf-attached__label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+.lf-attached__list { display: flex; flex-direction: column; gap: 6px; }
+.lf-attached__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg-secondary);
+  font-size: 13px;
+}
+.lf-attached__item-title { flex: 1; font-weight: 600; }
+.lf-attached__item-actions { display: flex; gap: 6px; }
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .lf-grid { grid-template-columns: 1fr; }
+  .lf-card { flex-direction: column; }
+  .lf-card__actions { flex-direction: row; flex-wrap: wrap; }
+  .lf-preview-modal { width: 100vw; height: 100vh; border-radius: 0; }
+}
+
+/* ── Dark mode ── */
+[data-theme="dark"] .lf-card { background: var(--card); }
+[data-theme="dark"] .lf-html-editor { background: #1e1e1e; color: #d4d4d4; }
+[data-theme="dark"] .lf-drop-zone { border-color: var(--border); }
+[data-theme="dark"] .lf-preview-iframe { background: #fff; }

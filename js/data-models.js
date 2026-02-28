@@ -571,6 +571,45 @@
         };
     }
 
+    var FILE_TYPES = [
+        { value: 'presentation', label: 'Presentation', icon: '📊' },
+        { value: 'worksheet',    label: 'Worksheet',    icon: '📝' },
+        { value: 'activity',     label: 'Activity',     icon: '🎯' },
+        { value: 'other',        label: 'Other',        icon: '📄' }
+    ];
+
+    /**
+     * Create a new Lesson File metadata record.
+     * The actual HTML content is stored separately in IndexedDB via MSM.FileStore.
+     *
+     * @param {Object} data
+     * @param {string}   data.name        - Original filename (e.g. "lesson1.html")
+     * @param {string}   data.title       - User-friendly title
+     * @param {string}   [data.type]      - "presentation" | "worksheet" | "activity" | "other"
+     * @param {string[]} [data.classIds]  - Associated class IDs
+     * @param {string}   [data.lessonId]  - Optional linked lesson record ID
+     * @param {string}   [data.description]
+     * @param {number}   [data.fileSize]  - Byte size of HTML content
+     * @returns {Object}
+     */
+    function createLessonFile(data) {
+        var now = new Date().toISOString();
+        var defaults = {
+            id:          generateId('lf'),
+            name:        '',
+            title:       '',
+            type:        'presentation',
+            classIds:    [],
+            lessonId:    null,
+            description: '',
+            fileSize:    0,
+            uploadedAt:  now,
+            createdAt:   now,
+            updatedAt:   now
+        };
+        return merge(defaults, data);
+    }
+
     // =========================================================================
     // Public API
     // =========================================================================
@@ -594,6 +633,7 @@
         CANCELLATION_REASONS: CANCELLATION_REASONS,
         INTERACTION_TYPES: INTERACTION_TYPES,
         PLAN_STATUSES: PLAN_STATUSES,
+        FILE_TYPES: FILE_TYPES,
 
         // Factory functions
         createStudent: createStudent,
@@ -603,6 +643,7 @@
         createCalendarEvent: createCalendarEvent,
         createAssessment: createAssessment,
         createRemedial: createRemedial,
+        createLessonFile: createLessonFile,
 
         // Validation functions
         validateStudent: validateStudent,
