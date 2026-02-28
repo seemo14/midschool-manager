@@ -10,8 +10,9 @@
 (function () {
     'use strict';
 
-    var META_KEY   = 'msm_timetable';   // localStorage key for metadata
-    var STORE_ID   = 'tt_timetable';    // fixed IndexedDB ID (single timetable)
+    var META_KEY        = 'msm_timetable';   // localStorage key for metadata
+    var STORE_ID        = 'tt_timetable';    // fixed IndexedDB ID (single timetable)
+    var BUILTIN_VERSION = 2;                 // bump when built-in template changes
 
     document.addEventListener('DOMContentLoaded', function () {
         var FS = MSM.FileStore;
@@ -20,6 +21,7 @@
         // ── DOM refs ─────────────────────────────────────────────────────────
         var uploadArea    = document.getElementById('ttUploadArea');
         var viewerArea    = document.getElementById('ttViewer');
+        var periodsView   = document.getElementById('ttPeriodsView');
         var ttActions     = document.getElementById('ttActions');
         var viewerBox     = document.getElementById('ttViewerBox');
         var ttFileName    = document.getElementById('ttFileName');
@@ -30,6 +32,41 @@
         var lightbox      = document.getElementById('ttLightbox');
         var lightboxImg   = document.getElementById('ttLightboxImg');
         var lightboxClose = document.getElementById('ttLightboxClose');
+        var tabTimetable  = document.getElementById('tabTimetable');
+        var tabPeriods    = document.getElementById('tabPeriods');
+
+        // ── Tab switching ─────────────────────────────────────────────────────
+        var _activeTab = 'timetable';
+
+        function showTab(name) {
+            _activeTab = name;
+            var isTimetable = (name === 'timetable');
+            tabTimetable.classList.toggle('tt-tab--active', isTimetable);
+            tabPeriods.classList.toggle('tt-tab--active', !isTimetable);
+
+            if (isTimetable) {
+                periodsView.style.display = 'none';
+                // Re-show timetable state as appropriate
+                var raw = localStorage.getItem(META_KEY);
+                if (raw) {
+                    viewerArea.style.display  = '';
+                    ttActions.style.display   = '';
+                    uploadArea.style.display  = 'none';
+                } else {
+                    uploadArea.style.display  = '';
+                    viewerArea.style.display  = 'none';
+                    ttActions.style.display   = 'none';
+                }
+            } else {
+                uploadArea.style.display  = 'none';
+                viewerArea.style.display  = 'none';
+                ttActions.style.display   = 'none';
+                periodsView.style.display = '';
+            }
+        }
+
+        tabTimetable.addEventListener('click', function () { showTab('timetable'); });
+        tabPeriods.addEventListener('click',   function () { showTab('periods'); });
 
         // ── Load saved timetable on init ─────────────────────────────────────
         loadTimetable();
@@ -126,6 +163,12 @@
             var meta;
             try { meta = JSON.parse(raw); } catch (e) { loadBuiltinDefault(); return; }
 
+            // If the built-in template was updated, force a refresh
+            if (meta.builtin && (meta.builtinVersion || 1) < BUILTIN_VERSION) {
+                loadBuiltinDefault();
+                return;
+            }
+
             FS.get(STORE_ID).then(function (content) {
                 if (!content) { loadBuiltinDefault(); return; }
                 showTimetable(meta, content);
@@ -145,7 +188,8 @@
                     type: 'html',
                     size: html.length,
                     savedAt: new Date().toISOString(),
-                    builtin: true
+                    builtin: true,
+                    builtinVersion: BUILTIN_VERSION
                 };
                 localStorage.setItem(META_KEY, JSON.stringify(meta));
                 showTimetable(meta, html);
@@ -157,15 +201,17 @@
         }
 
         function showEmpty() {
-            uploadArea.style.display = '';
+            uploadArea.style.display  = _activeTab === 'timetable' ? '' : 'none';
             viewerArea.style.display  = 'none';
+            periodsView.style.display = _activeTab === 'periods' ? '' : 'none';
             ttActions.style.display   = 'none';
         }
 
         function showTimetable(meta, content) {
-            uploadArea.style.display = 'none';
-            viewerArea.style.display  = '';
-            ttActions.style.display   = '';
+            uploadArea.style.display  = 'none';
+            periodsView.style.display = 'none';
+            viewerArea.style.display  = _activeTab === 'timetable' ? '' : 'none';
+            ttActions.style.display   = _activeTab === 'timetable' ? '' : 'none';
 
             // Populate info
             ttFileName.textContent = meta.name || 'Weekly Timetable';
