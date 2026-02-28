@@ -118,14 +118,42 @@
 
         function loadTimetable() {
             var raw = localStorage.getItem(META_KEY);
-            if (!raw) { showEmpty(); return; }
+            if (!raw) {
+                // First visit: auto-load the built-in timetable template
+                loadBuiltinDefault();
+                return;
+            }
             var meta;
-            try { meta = JSON.parse(raw); } catch (e) { showEmpty(); return; }
+            try { meta = JSON.parse(raw); } catch (e) { loadBuiltinDefault(); return; }
 
             FS.get(STORE_ID).then(function (content) {
-                if (!content) { showEmpty(); return; }
+                if (!content) { loadBuiltinDefault(); return; }
                 showTimetable(meta, content);
-            }).catch(function () { showEmpty(); });
+            }).catch(function () { loadBuiltinDefault(); });
+        }
+
+        function loadBuiltinDefault() {
+            var tpl = document.getElementById('builtinTimetable');
+            if (!tpl) { showEmpty(); return; }
+            var html = tpl.textContent || tpl.innerHTML;
+            if (!html || !html.trim()) { showEmpty(); return; }
+            // Save silently so next load is instant
+            FS.save(STORE_ID, html).then(function () {
+                var meta = {
+                    id: STORE_ID,
+                    name: 'Weekly Timetable 2025-2026.html',
+                    type: 'html',
+                    size: html.length,
+                    savedAt: new Date().toISOString(),
+                    builtin: true
+                };
+                localStorage.setItem(META_KEY, JSON.stringify(meta));
+                showTimetable(meta, html);
+            }).catch(function () {
+                // IndexedDB unavailable — render directly without saving
+                var meta = { name: 'Weekly Timetable 2025-2026', type: 'html', size: html.length };
+                showTimetable(meta, html);
+            });
         }
 
         function showEmpty() {
@@ -140,10 +168,12 @@
             ttActions.style.display   = '';
 
             // Populate info
-            ttFileName.textContent = meta.name || 'Timetable';
-            var kb = meta.size ? Math.round(meta.size / 1024) + ' KB · ' : '';
-            var dt = meta.savedAt ? 'Saved ' + meta.savedAt.slice(0, 10) : '';
-            ttFileMeta.textContent = kb + dt;
+            ttFileName.textContent = meta.name || 'Weekly Timetable';
+            var parts = [];
+            if (meta.builtin) parts.push('Built-in');
+            if (meta.size) parts.push(Math.round(meta.size / 1024) + ' KB');
+            if (meta.savedAt) parts.push('Saved ' + meta.savedAt.slice(0, 10));
+            ttFileMeta.textContent = parts.join(' · ');
 
             // Render content
             viewerBox.innerHTML = '';

@@ -304,5 +304,299 @@
 <script src="js/app.js"></script>
 <script src="js/file-store.js"></script>
 <script src="js/timetable.js"></script>
+
+<!-- =====================================================================
+     BUILT-IN TIMETABLE TEMPLATE
+     Loaded automatically on first visit. Replace via "Replace" button.
+     ===================================================================== -->
+<script type="text/timetable-template" id="builtinTimetable"><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Timetable – Mohammed Amine Mchichi | 2025–2026</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Plus Jakarta Sans', 'Segoe UI', sans-serif;
+    background: #F2F2FB;
+    padding: 30px 20px;
+    color: #1a202c;
+  }
+  header {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+  header h1 {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #312E81;
+    letter-spacing: -0.02em;
+  }
+  header p {
+    font-size: 0.95rem;
+    color: #4a5568;
+    margin-top: 6px;
+  }
+  header .badge {
+    display: inline-block;
+    margin-top: 10px;
+    background: #4F46E5;
+    color: white;
+    border-radius: 20px;
+    padding: 4px 18px;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+  .table-wrapper {
+    overflow-x: auto;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(79,70,229,0.12);
+    background: white;
+    border: 1px solid #E3E3F3;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 720px;
+  }
+  thead th {
+    background: #312E81;
+    color: white;
+    padding: 13px 8px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-align: center;
+    letter-spacing: 0.3px;
+    border-right: 1px solid #3730A3;
+  }
+  thead th:first-child {
+    background: #1E1B4B;
+    font-size: 0.78rem;
+    width: 90px;
+  }
+  thead th:last-child { border-right: none; }
+  tbody tr { transition: background 0.2s; }
+  tbody tr:hover { background: #F5F5FF; }
+  tbody td {
+    padding: 6px 5px;
+    text-align: center;
+    border: 1px solid #E3E3F3;
+    height: 72px;
+    vertical-align: middle;
+    font-size: 0.8rem;
+  }
+  td.day-label {
+    background: #4338CA;
+    color: white;
+    font-weight: 700;
+    font-size: 0.88rem;
+    letter-spacing: 0.5px;
+    border: none;
+  }
+  /* ── Class chips ── */
+  .cell-chip {
+    display: inline-block;
+    padding: 6px 11px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 0.79rem;
+    line-height: 1.4;
+    min-width: 72px;
+    text-align: center;
+  }
+  .y1 { background: #E0E7FF; color: #312E81; }   /* 1ASCG – indigo */
+  .y2 { background: #D1FAE5; color: #065F46; }   /* 2ASCG – emerald */
+  .y3 { background: #FEF3C7; color: #92400E; }   /* 3ASCG – amber */
+  .room {
+    display: block;
+    font-size: 0.68rem;
+    font-weight: 600;
+    margin-top: 3px;
+    opacity: 0.7;
+    letter-spacing: 0.02em;
+  }
+  .empty { color: #CBD5E1; font-size: 1.1rem; }
+
+  /* ── Legend ── */
+  .legend {
+    display: flex;
+    gap: 18px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 22px;
+  }
+  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.83rem; color: #4a5568; }
+  .legend-dot { width: 22px; height: 22px; border-radius: 7px; }
+
+  /* ── Classes list ── */
+  .classes-section {
+    margin-top: 22px;
+    background: white;
+    border-radius: 14px;
+    padding: 18px 22px;
+    box-shadow: 0 2px 12px rgba(79,70,229,0.08);
+    border: 1px solid #E3E3F3;
+  }
+  .classes-section h2 { font-size: 0.95rem; font-weight: 700; color: #312E81; margin-bottom: 12px; }
+  .classes-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+  .class-tag { padding: 4px 13px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+
+  footer { text-align: center; margin-top: 22px; font-size: 0.75rem; color: #a0aec0; }
+
+  @media print {
+    body { background: white; padding: 10px; }
+    .table-wrapper, .classes-section { box-shadow: none; border: 1px solid #ddd; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>📅 Weekly Timetable</h1>
+  <p>Mohammed Amine Mchichi &nbsp;·&nbsp; English Teacher</p>
+  <p>Bni Smih Middle School — Chefchaouen &nbsp;|&nbsp; Academic Year 2025–2026</p>
+  <span class="badge">Tanger-Tetouan-Al Hoceima Academy</span>
+</header>
+
+<div class="table-wrapper">
+  <table>
+    <thead>
+      <tr>
+        <th>Day</th>
+        <th>09h – 10h</th>
+        <th>10h – 11h</th>
+        <th>11h – 12h</th>
+        <th>12h – 13h</th>
+        <th>13h – 14h</th>
+        <th>14h – 15h</th>
+        <th>15h – 16h</th>
+        <th>16h – 17h</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <!-- MONDAY -->
+      <tr>
+        <td class="day-label">Monday</td>
+        <td class="empty">–</td>
+        <td class="empty">–</td>
+        <td class="empty">–</td>
+        <td class="empty">–</td>
+        <td><span class="cell-chip y1">1ASCG1<span class="room">Room S8</span></span></td>
+        <td><span class="cell-chip y2">2ASCG3<span class="room">Room S9</span></span></td>
+        <td><span class="cell-chip y2">2ASCG4<span class="room">Room S9</span></span></td>
+        <td><span class="cell-chip y2">2ASCG1<span class="room">Room S9</span></span></td>
+      </tr>
+
+      <!-- TUESDAY -->
+      <tr>
+        <td class="day-label">Tuesday</td>
+        <td class="empty">–</td>
+        <td class="empty">–</td>
+        <td class="empty">–</td>
+        <td><span class="cell-chip y3">3ASCG3<span class="room">Room SPC</span></span></td>
+        <td><span class="cell-chip y1">1ASCG2<span class="room">Room S9</span></span></td>
+        <td><span class="cell-chip y3">3ASCG4<span class="room">Room S9</span></span></td>
+        <td><span class="cell-chip y3">3ASCG2<span class="room">Room S9</span></span></td>
+        <td><span class="cell-chip y2">2ASCG2<span class="room">Room S9</span></span></td>
+      </tr>
+
+      <!-- WEDNESDAY -->
+      <tr>
+        <td class="day-label">Wednesday</td>
+        <td class="empty">–</td>
+        <td class="empty">–</td>
+        <td class="empty">–</td>
+        <td class="empty">–</td>
+        <td><span class="cell-chip y2">2ASCG1<span class="room">Room S2</span></span></td>
+        <td><span class="cell-chip y2">2ASCG2<span class="room">Room S9</span></span></td>
+        <td><span class="cell-chip y3">3ASCG4<span class="room">Room S9</span></span></td>
+        <td><span class="cell-chip y1">1ASCG5<span class="room">Room ?</span></span></td>
+      </tr>
+
+      <!-- THURSDAY -->
+      <tr>
+        <td class="day-label">Thursday</td>
+        <td class="empty">–</td>
+        <td class="empty">–</td>
+        <td class="empty">–</td>
+        <td class="empty">–</td>
+        <td><span class="cell-chip y1">1ASCG4<span class="room">Room S8</span></span></td>
+        <td><span class="cell-chip y2">2ASCG3<span class="room">Room S9</span></span></td>
+        <td><span class="cell-chip y3">3ASCG1<span class="room">Room S9</span></span></td>
+        <td><span class="cell-chip y1">1ASCG3<span class="room">Room S9</span></span></td>
+      </tr>
+
+      <!-- FRIDAY -->
+      <tr>
+        <td class="day-label">Friday</td>
+        <td><span class="cell-chip y3">3ASCG2<span class="room">Room S9</span></span></td>
+        <td><span class="cell-chip y3">3ASCG1<span class="room">Room S9</span></span></td>
+        <td><span class="cell-chip y3">3ASCG3<span class="room">Room S9</span></span></td>
+        <td><span class="cell-chip y2">2ASCG4<span class="room">Room S9</span></span></td>
+        <td class="empty">–</td>
+        <td class="empty">–</td>
+        <td class="empty">–</td>
+        <td class="empty">–</td>
+      </tr>
+
+      <!-- SATURDAY -->
+      <tr>
+        <td class="day-label">Saturday</td>
+        <td class="empty">–</td>
+        <td class="empty">–</td>
+        <td class="empty">–</td>
+        <td class="empty">–</td>
+        <td class="empty">–</td>
+        <td class="empty">–</td>
+        <td class="empty">–</td>
+        <td class="empty">–</td>
+      </tr>
+
+    </tbody>
+  </table>
+</div>
+
+<!-- Legend -->
+<div class="legend">
+  <div class="legend-item">
+    <div class="legend-dot" style="background:#E0E7FF;border:1px solid #C7D2FE"></div>
+    1st Year (1ASCG)
+  </div>
+  <div class="legend-item">
+    <div class="legend-dot" style="background:#D1FAE5;border:1px solid #A7F3D0"></div>
+    2nd Year (2ASCG)
+  </div>
+  <div class="legend-item">
+    <div class="legend-dot" style="background:#FEF3C7;border:1px solid #FDE68A"></div>
+    3rd Year (3ASCG)
+  </div>
+</div>
+
+<!-- Classes list -->
+<div class="classes-section">
+  <h2>📋 Assigned Classes — 13 total</h2>
+  <div class="classes-grid">
+    <span class="class-tag y1">1ASCG1</span>
+    <span class="class-tag y1">1ASCG2</span>
+    <span class="class-tag y1">1ASCG3</span>
+    <span class="class-tag y1">1ASCG4</span>
+    <span class="class-tag y1">1ASCG5</span>
+    <span class="class-tag y2">2ASCG1</span>
+    <span class="class-tag y2">2ASCG2</span>
+    <span class="class-tag y2">2ASCG3</span>
+    <span class="class-tag y2">2ASCG4</span>
+    <span class="class-tag y3">3ASCG1</span>
+    <span class="class-tag y3">3ASCG2</span>
+    <span class="class-tag y3">3ASCG3</span>
+    <span class="class-tag y3">3ASCG4</span>
+  </div>
+</div>
+
+<footer>Bni Smih Middle School · Academic Year 2025–2026 · MidSchool Manager</footer>
+</body>
+</html></script>
+
 </body>
 </html>
+
