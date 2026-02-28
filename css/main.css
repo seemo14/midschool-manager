@@ -1310,8 +1310,12 @@ input.input-error:focus, select.input-error:focus, textarea.input-error:focus {
   background: rgba(0,0,0,0);
   z-index: 150;
   transition: background var(--transition-normal);
+  pointer-events: none; /* never intercept clicks while invisible */
 }
-.sidepanel-backdrop--visible { background: rgba(15,23,42,0.45); }
+.sidepanel-backdrop--visible {
+  background: rgba(15,23,42,0.45);
+  pointer-events: auto; /* enable click-to-close only when visible */
+}
 
 .sidepanel {
   position: fixed;
@@ -1704,7 +1708,71 @@ input.input-error:focus, select.input-error:focus, textarea.input-error:focus {
   animation: msm-fade-in 0.15s ease;
 }
 
-.modal {
+/* ── Static modal overlay (used in files.html and other pages) ── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15,23,42,0.55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-md);
+}
+
+/* ── BEM sub-element aliases (modal__header etc.) ── */
+.modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-lg) var(--space-xl);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.modal__title {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: -0.025em;
+  color: var(--text);
+}
+.modal__close {
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: var(--radius-md);
+  color: var(--text-tertiary);
+  cursor: pointer;
+  font-size: 20px;
+  transition: all var(--transition-fast);
+  border: none;
+  background: none;
+  line-height: 1;
+}
+.modal__close:hover { background: var(--bg-secondary); color: var(--text); }
+.modal__body {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-xl);
+  -webkit-overflow-scrolling: touch;
+}
+.modal__footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-xl);
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+  background: var(--bg);
+}
+
+[data-theme="dark"] .modal-overlay { background: rgba(0,0,0,0.65); }
+[data-theme="dark"] .modal__header { border-bottom-color: #2A2A4E; }
+[data-theme="dark"] .modal__footer { border-top-color: #2A2A4E; background: #0D0D1F; }
+
+
   background: var(--card);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-xl);

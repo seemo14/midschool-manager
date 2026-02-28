@@ -518,7 +518,38 @@
     // =====================================================================
     // PUBLIC API
     // =====================================================================
+    // ── Shared file helpers (uses MSM.FileStore loaded alongside lessons.js) ──
+    function _openFileBlob(id, cb) {
+      if (!MSM.FileStore) { UI.showToast('File system not available', 'error'); return; }
+      MSM.FileStore.get(id).then(function (content) {
+        if (!content) { UI.showToast('File content not found', 'error'); return; }
+        var blob = new Blob([content], { type: 'text/html; charset=utf-8' });
+        var url  = URL.createObjectURL(blob);
+        cb(url);
+        setTimeout(function () { URL.revokeObjectURL(url); }, 15000);
+      }).catch(function () { UI.showToast('Could not load file', 'error'); });
+    }
+
     window.MSM.LessonsPage = {
+      presentFile: function (id) {
+        _openFileBlob(id, function (url) {
+          var win = window.open(url, '_blank');
+          if (!win) UI.showToast('Pop-up blocked — please allow pop-ups', 'warning');
+        });
+      },
+      previewFile: function (id) {
+        _openFileBlob(id, function (url) {
+          var win = window.open(url, '_blank');
+          if (!win) UI.showToast('Pop-up blocked — please allow pop-ups', 'warning');
+        });
+      },
+      printFile: function (id) {
+        _openFileBlob(id, function (url) {
+          var win = window.open(url, '_blank');
+          if (!win) { UI.showToast('Pop-up blocked — please allow pop-ups to print', 'warning'); return; }
+          win.addEventListener('load', function () { win.focus(); win.print(); });
+        });
+      },
       view: function (id) {
         var lesson = S.getById(KEYS.LESSON_RECORDS, id);
         if (!lesson) return;
